@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "booklog-api"
+version = "0.1.0"
+description = "booklog for developer"
+authors = ["이주환 <118493627+LeeJuHwan@users.noreply.github.com>"]
+license = "MIT"
+readme = "README.md"
+packages = [{include = "booklog_api"}]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+djangorestframework = "^3.15.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

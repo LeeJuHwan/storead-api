@@ -15,7 +15,7 @@ environ.Env.read_env(
     env_file=Path(ROOT_DIR.parent, ".envs", ".dev", ".django"),
 )
 
-SOCIAL_PALTFORM = load_yaml_file(super_secret_yaml)
+SOCIAL_PALTFORM = load_yaml_file(super_secret_yaml).get("social")
 
 
 # Application definition

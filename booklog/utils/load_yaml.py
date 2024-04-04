@@ -10,4 +10,4 @@ def load_yaml_file(path: str):
         raise FileNotFoundError(path)
 
     with open(path, "r") as f:
-        return yaml.safe_load(f).get("social")
+        return yaml.safe_load(f)

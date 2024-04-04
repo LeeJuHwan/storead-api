@@ -1,15 +1,21 @@
 from pathlib import Path
+import environ
+
+from utils.load_yaml import load_yaml_file
+
+env = environ.Env()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 ROOT_DIR = Path(__file__).resolve().parent.parent.parent
 APP_DIR = ROOT_DIR / "core_apps"
+super_secret_yaml = Path(ROOT_DIR, "config", "settings", ".social.yaml")
 
-SECRET_KEY = "django-insecure-cl1z3((loz^o(=1k-t#$7^)cc3i23tej3e$5gr!r@n$n+yu853"
+# TODO: Dockerfile 내 호출로 변경
+environ.Env.read_env(
+    env_file=Path(ROOT_DIR.parent, ".envs", ".dev", ".django"),
+)
 
-
-DEBUG = True
-
-ALLOWED_HOSTS = ['*']
+SOCIAL_PALTFORM = load_yaml_file(super_secret_yaml)
 
 
 # Application definition

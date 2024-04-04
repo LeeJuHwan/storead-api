@@ -27,7 +27,9 @@ THIRD_PARTY_APPS = [
 ]
 
 
-LOCAL_APPS = []
+LOCAL_APPS = [
+    "core_apps.social_users",
+]
 
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -108,6 +110,8 @@ USE_TZ = True
 SITE_ID = 1
 
 ADMIN_URL = "superadmin/"
+
+AUTH_USER_MODEL = "social_users.Admin"
 
 
 # Static files (CSS, JavaScript, Images)

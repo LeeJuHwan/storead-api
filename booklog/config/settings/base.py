@@ -1,9 +1,11 @@
 from pathlib import Path
 import environ
 
-from utils.load_yaml import load_yaml_file
+from utils.common.load_yaml import load_yaml_file
 
 env = environ.Env()
+
+SECRET_KEY = env("SIGNING_KEY", default="0_w4ttc_r+95i0c^4v2ea7ppol817er--ef!&&s2c41r&g3cdy")
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 ROOT_DIR = Path(__file__).resolve().parent.parent.parent
@@ -15,7 +17,7 @@ environ.Env.read_env(
     env_file=Path(ROOT_DIR.parent, ".envs", ".dev", ".django"),
 )
 
-SOCIAL_PALTFORM = load_yaml_file(super_secret_yaml).get("social")
+SOCIAL_PLATFORM = load_yaml_file(super_secret_yaml).get("social")
 
 
 # Application definition
@@ -42,6 +44,7 @@ INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",

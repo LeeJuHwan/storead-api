@@ -3,7 +3,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.utils.translation import gettext_lazy as _
 
-from .forms import UserChangeForm, UserCreationForm
+from .forms import UserChangeForm, UserCreationForm, SocialUserCreationForm
 from .models import SocialUser
 
 
@@ -53,11 +53,17 @@ class UserAdmin(BaseUserAdmin):
 
 class SocialAccount(admin.ModelAdmin):
     ordering = ["-date_joined"]
+    form = UserChangeForm
+    add_form = SocialUserCreationForm
+    model = SocialUser
 
     list_display = [
         "pkid",
-        "name",
+        "uuid",
         "provider",
+        "name",
+        "last_login",
+        "date_joined",
     ]
 
     list_display_links = ["pkid", "name", "provider"]
@@ -66,8 +72,13 @@ class SocialAccount(admin.ModelAdmin):
         "name",
         "uuid",
         "provider",
+        "last_login",
+        "date_joined",
     ]
+
+    search_fields = ["name", "provider"]
 
 
 admin.site.register(User, UserAdmin)
+# admin.site.register(SocialUser)
 admin.site.register(SocialUser, SocialAccount)

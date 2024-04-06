@@ -1,57 +1,44 @@
-from typing import Optional
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.request import Request
 from rest_framework.permissions import AllowAny
 
-from .domain import SocialPlatform
+from .models import SocialUser
+from .services import SocialOAuthService
 
 
-class BaseSocialLogin(APIView):
+class SocialServiceMixin(APIView, SocialOAuthService):
     permission_classes = (AllowAny,)
-
-    client_id: str = None
-    client_secret: str = None
-    redirect_uri: str = None
-    state: Optional[str] = None
     platform: str = None
 
-    @property
-    def social_domain(self):
-        oauth_info = getattr(SocialPlatform, self.platform, None)
+    def get(self, request: Request):
+        code: str = request.GET.get("code")
+        access_token: str = self.request_access_token(code)
+        user_profile_request: Request = self.get_user_profile(access_token)
 
-        if not oauth_info:
-            raise ValueError(f"{self.platform} is not supported")
+        try:
+            uuid: str = self.get_user_uuid(user_profile_request)
+            user: SocialUser = SocialUser.objects.get(uuid=uuid)
 
-        return oauth_info.info.to_dict()
+            if user.provider != self.platform:
+                response_message = {"error": "no matching social type"}
+                return Response(response_message, status=status.HTTP_400_BAD_REQUEST)
 
-    @property
-    def auth(self):
-        return {
-            "platform": self.platform,
-            "fields": {attr: value for attr, value in self.social_domain.items() if value}}
+            return self.login(user)
 
-    def get(self, request):
-        request_dict = dict(request.META)
-        print(f"auth: {self.auth}")
-
-        # TODO: 응답 값 수정
-        context = {
-            "request": request_dict.get("REQUEST_METHOD"),
-            "endpoint": request_dict.get("PATH_INFO"),
-            "client_ip": request_dict.get("REMOTE_ADDR"),
-            }
-
-        return Response(context, status=status.HTTP_200_OK)
+        except SocialUser.DoesNotExist:
+            self.register(user_profile_request)
 
 
-class GoogleLogin(BaseSocialLogin):
+class GoogleLogin(SocialServiceMixin):
     platform = "google"
+    uuid_key = "user_id"
 
 
-class KakaoLogin(BaseSocialLogin):
+class KakaoLogin(SocialServiceMixin):
     platform = "kakao"
 
 
-class GithubLogin(BaseSocialLogin):
+class GithubLogin(SocialServiceMixin):
     platform = "github"

@@ -1,4 +1,5 @@
 from pathlib import Path
+from datetime import timedelta
 import environ
 
 from utils.common.load_yaml import load_yaml_file
@@ -18,7 +19,7 @@ environ.Env.read_env(
 )
 
 SOCIAL_PLATFORM = load_yaml_file(super_secret_yaml).get("social")
-
+PLATFORM_URL = load_yaml_file(super_secret_yaml).get("platform_url")
 
 # Application definition
 DJANGO_APPS = [
@@ -31,7 +32,11 @@ DJANGO_APPS = [
 ]
 
 THIRD_PARTY_APPS = [
+    "corsheaders",
     "rest_framework",
+    "rest_framework_simplejwt",
+    "rest_framework.authtoken",
+    "dj_rest_auth",
 ]
 
 
@@ -103,6 +108,33 @@ AUTH_PASSWORD_VALIDATORS = [
         "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
+
+
+REST_FRAMEWORK = {
+    "DEFAULT_PERMISSION_CLASSES": [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ],
+
+    # "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+}
+
+REST_USE_JWT = True
+REST_AUTH = {
+    "SESSION_LOGIN": False,
+    "USE_JWT": True,
+    'JWT_AUTH_HTTPONLY': True,
+    "JWT_AUTH_COOKIE": "booklog-access-token",
+    "JWT_AUTH_REFRESH_COOKIE": "booklog-refresh-token",
+}
+
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(hours=9, minutes=30),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=1, hours=9),
+    "SIGNING_KEY": SECRET_KEY,
+    "USER_ID_FIELD": "pkid",
+    "USER_ID_CLAIM": "pkid",
+}
 
 
 # Internationalization

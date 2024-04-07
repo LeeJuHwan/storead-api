@@ -1,7 +1,8 @@
 import requests
-from datetime import timedelta
 from requests.models import Response as RequestsResponse
+from datetime import timedelta
 from typing import Dict, Union, Optional
+
 from django.conf import settings
 from django.contrib.auth.models import update_last_login
 from rest_framework import status
@@ -30,7 +31,7 @@ class SocialOAuthService:
         """
         Return the domain of the social platform.
         """
-        oauth: SOCIAL_TYPES = getattr(SocialPlatform, self.platform, None)
+        oauth: Optional[SOCIAL_TYPES] = getattr(SocialPlatform, self.platform, None)
 
         if not oauth:
             raise ValueError(f"{self.platform} is not supported")
@@ -39,12 +40,18 @@ class SocialOAuthService:
 
     @property
     def auth(self) -> Dict[str, Dict[str, str]]:
+        """
+        Return the authorization information.
+        """
         if self._auth is None:
             self._auth: Dict[str, str] = {attr: value for attr, value in self.social_domain.items() if value}
         return self._auth
 
     @property
     def oauth_request_url(self) -> str:
+        """
+        Return domain of the oauth request url.
+        """
         return self.auth.get("token_info_api")
 
     def _add_authorize_code(self, code: str):
@@ -88,6 +95,9 @@ class SocialOAuthService:
         return access_token
 
     def get_user_profile(self, access_token: str) -> Dict[str, str | int]:
+        """
+        Get user profile by the access token.
+        """
         user_profile: RequestsResponse = requests.get(f"{self.oauth_request_url}?access_token={access_token}")
         response_status_code: int = user_profile.status_code
 
@@ -97,7 +107,10 @@ class SocialOAuthService:
         return user_profile.json()
 
     def get_user_uuid(self, user_profile: Dict[str, str | int]) -> str:
-        uuid: str = user_profile.get(self.uuid_key)
+        """
+        Get user uuid by the user profile.
+        """
+        uuid: Optional[str] = user_profile.get(self.uuid_key)
 
         if not uuid:
             raise ValueError("user_id is not found into user profile")
@@ -111,10 +124,10 @@ class SocialOAuthService:
         access_token_lifetime: timedelta = settings.SIMPLE_JWT['ACCESS_TOKEN_LIFETIME']
         refresh_token_lifetime: timedelta = settings.SIMPLE_JWT['REFRESH_TOKEN_LIFETIME']
 
-        response_data = {'refresh': None, 'access': str(refresh.access_token)}
-        response = Response(response_data, status=status.HTTP_200_OK)
+        response_data = {'refresh': "", 'access': str(refresh.access_token)}
+        response: Response = Response(response_data, status=status.HTTP_200_OK)
 
-        # TODO: set_cookie timezone default value is UTC, should be changed to local timezone
+        # NOTE: remove sametime option -> use default to possible different sites receive cookies
         response.set_cookie("access_token", str(refresh.access_token), max_age=access_token_lifetime)
         response.set_cookie("refresh_token", str(refresh), httponly=True, max_age=refresh_token_lifetime)
         update_last_login(None, user)  # NOTE: update social user last login field

@@ -64,7 +64,7 @@ class SocialOAuthService:
         """
         Authorize the client with the authorization code.
         """
-        platform_request_url: str = getattr(PlatformRequestUrl, self.platform, None)
+        platform_request_url: Optional[str] = getattr(PlatformRequestUrl, self.platform, None)
 
         if not platform_request_url:
             raise ValueError(f"{self.platform} is not supported")

@@ -129,8 +129,8 @@ REST_AUTH = {
 
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(hours=9, minutes=30),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=1, hours=9),
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
     "SIGNING_KEY": SECRET_KEY,
     "USER_ID_FIELD": "pkid",
     "USER_ID_CLAIM": "pkid",

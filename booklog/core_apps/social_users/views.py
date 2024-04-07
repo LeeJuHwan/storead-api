@@ -31,6 +31,10 @@ class SocialServiceMixin(APIView, SocialOAuthService):
         except SocialUser.DoesNotExist:
             self.register(user_profile_request)
 
+        except Exception as e:
+            response_message = {"error": str(e)}
+            return Response(response_message, status=status.HTTP_400_BAD_REQUEST)
+
 
 class GoogleLogin(SocialServiceMixin):
     platform = "google"

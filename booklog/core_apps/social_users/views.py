@@ -12,9 +12,10 @@ class SocialServiceMixin(APIView, SocialOAuthService):
     permission_classes = (AllowAny,)
     platform: str = None
 
-    def get(self, request: Request):
+    def get(self, request: Request) -> Response:
         code: str = request.GET.get("code")
-        access_token: str = self.request_access_token(code)
+        access_token: str = self.get_access_token(code)
+
         user_profile_request: Request = self.get_user_profile(access_token)
 
         try:
@@ -38,7 +39,9 @@ class GoogleLogin(SocialServiceMixin):
 
 class KakaoLogin(SocialServiceMixin):
     platform = "kakao"
+    uuid_key = "id"
 
 
 class GithubLogin(SocialServiceMixin):
     platform = "github"
+    uuid_key = "id"

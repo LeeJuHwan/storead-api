@@ -77,7 +77,7 @@ class SocialOAuthService:
         Access token by the authorization code.
         """
         if not code:
-            raise ValueError("not found authorization code")
+            return Response({"error": "not found authorization code"}, status=status.HTTP_400_BAD_REQUEST)
         self._add_authorize_code(code)
 
         token_req: RequestsResponse = self._request_access_token()
@@ -86,11 +86,12 @@ class SocialOAuthService:
         error: Optional[str] = token_response.get("error")
         if error:
             error_description: str = token_response.get("error_description")
-            raise ValueError(f"during access token request occurred error: {error}, detail: {error_description}")
+            return Response({"error": f"{error} - error_description: {error_description}"},
+                            status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         access_token: Optional[str] = token_response.get("access_token")
         if not access_token:
-            raise ValueError("access_token is not found")
+            return Response({"error": "access_token is not found"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         return access_token
 
@@ -102,8 +103,8 @@ class SocialOAuthService:
         response_status_code: int = user_profile.status_code
 
         if response_status_code != 200:
-            raise ValueError(f"Failed to retrieve user profile. Status code: {response_status_code}."
-                             "The access token may be invalid or expired.")
+            return Response({"error": f"Failed to retrieve user profile. Status code: {response_status_code}."
+                            "The access token may be invalid or expired."}, status=status.HTTP_400_BAD_REQUEST)
         return user_profile.json()
 
     def get_user_uuid(self, user_profile: Dict[str, str | int]) -> str:

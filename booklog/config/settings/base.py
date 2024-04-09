@@ -13,11 +13,6 @@ ROOT_DIR = Path(__file__).resolve().parent.parent.parent
 APP_DIR = ROOT_DIR / "core_apps"
 super_secret_yaml = Path(ROOT_DIR, "config", "settings", ".social.yaml")
 
-# TODO: Dockerfile 내 호출로 변경
-environ.Env.read_env(
-    env_file=Path(ROOT_DIR.parent, ".envs", ".dev", ".django"),
-)
-
 SOCIAL_PLATFORM = load_yaml_file(super_secret_yaml).get("social")
 PLATFORM_URL = load_yaml_file(super_secret_yaml).get("platform_url")
 
@@ -158,7 +153,11 @@ AUTH_USER_MODEL = "social_users.Admin"
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
-STATIC_URL = "static/"
+STATIC_URL = "/staticfiles/"
+STATIC_ROOT = str(ROOT_DIR / "staticfiles")
+
+MEDIA_URL = "/mediafiles/"
+MEDIA_ROOT = str(ROOT_DIR / "mediafiles")
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field

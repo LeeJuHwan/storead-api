@@ -1,0 +1,7 @@
+venv/
+.venv/
+**/.git
+.gitignore
+.vscode
+LICENSE
+Makefile

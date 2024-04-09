@@ -1,0 +1,8 @@
+#!/bin/sh
+
+set +e
+echo "==> Django setup, executing: makemigrations "
+python3 booklog/manage.py makemigrations
+echo "==> Django setup, executing: migrate pro"
+python3 booklog/manage.py migrate
+exec "$@"

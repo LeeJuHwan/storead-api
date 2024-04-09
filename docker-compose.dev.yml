@@ -1,0 +1,27 @@
+version: '3.9'
+
+services:
+  api: &api
+    build:
+      context: .
+      dockerfile: docker/dev/django/Dockerfile
+    command: "python3 booklog/manage.py runserver 0:8000"
+    volumes:
+      - .:/app
+      - static_volume:/app/staticfiles
+      - media_volume:/app/mediafiles
+    ports:
+      - '8000:8000'
+    env_file:
+      - ./.envs/.dev/.django
+    restart: unless-stopped
+    networks:
+      - api-server
+
+networks:
+    api-server:
+        driver: bridge
+
+volumes:
+    static_volume:
+    media_volume:

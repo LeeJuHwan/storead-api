@@ -161,3 +161,10 @@ cython_debug/
 
 # SuperSecret
 **/**/**/.social.yaml
+
+# migrations files
+**/**/**/migrations/*
+
+# static files
+**/mediafiles/*
+**/staticfiles/*

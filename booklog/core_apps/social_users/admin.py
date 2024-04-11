@@ -80,5 +80,4 @@ class SocialAccount(admin.ModelAdmin):
 
 
 admin.site.register(User, UserAdmin)
-# admin.site.register(SocialUser)
 admin.site.register(SocialUser, SocialAccount)

@@ -32,11 +32,14 @@ THIRD_PARTY_APPS = [
     "rest_framework_simplejwt",
     "rest_framework.authtoken",
     "dj_rest_auth",
+    "taggit",
 ]
 
 
 LOCAL_APPS = [
     "core_apps.social_users",
+    "core_apps.articles",
+    "core_apps.books",
 ]
 
 

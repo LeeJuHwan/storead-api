@@ -8,6 +8,7 @@ urlpatterns = [
     path("api/v1/auth/", include("core_apps.social_users.urls")),
     path("api/v1/auth/", include("dj_rest_auth.urls")),
     path("api/v1/articles/", include("core_apps.articles.urls")),
+    path("api/v1/books/", include("core_apps.books.urls")),
 ]
 
 

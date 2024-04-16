@@ -6,6 +6,7 @@ body:
   - type: textarea
     id: feat-and-fix
     attributes:
+      label: Feature or Fix
       description: 추가 기능 또는 기능 수정에 대한 요구사항을 작성 해주세요.
       placeholder: "자세한 설명을 적어주세요."
     validations:

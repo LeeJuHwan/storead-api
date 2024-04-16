@@ -15,5 +15,4 @@ class BookListAPIView(ListAPIView):
     model = Book
     serializer_class = BookListSerializer
     permission_classes = [AllowAny]
-    lookup_field = "pkid"
     queryset = Book.objects.all()

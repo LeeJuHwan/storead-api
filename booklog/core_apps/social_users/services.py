@@ -67,7 +67,8 @@ class SocialOAuthService:
         platform_request_url: Optional[str] = getattr(PlatformRequestUrl, self.platform, None)
 
         if not platform_request_url:
-            raise ValueError(f"{self.platform} is not supported")
+            return Response({"error": f"{self.platform} is not supported"},
+                            status=status.HTTP_400_BAD_REQUEST)
 
         token_request_call_endpoint: str = platform_request_url.format(**self.auth)
         return requests.post(token_request_call_endpoint)

@@ -40,6 +40,7 @@ LOCAL_APPS = [
     "core_apps.social_users",
     "core_apps.articles",
     "core_apps.books",
+    "core_apps.profiles",
 ]
 
 

@@ -118,7 +118,7 @@ class SocialOAuthService:
             raise ValueError("user_id is not found into user profile")
         return uuid
 
-    def login(self, user: SocialUser) -> Response:
+    def social_login(self, user: SocialUser) -> Response:
         """
         Login a social user.
         """
@@ -143,7 +143,7 @@ class SocialOAuthService:
 
         user: SocialUser = SocialUser.objects.create(
             uuid=self.get_user_uuid(user_profile),
-            name=user_profile.get("name", ""),
+            username=user_profile.get("name", ""),
             provider=self.platform,
         )
-        return self.login(user)
+        return self.social_login(user)

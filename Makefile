@@ -18,6 +18,14 @@ logs:
 logs-api:
 	docker compose -f docker-compose.$(ENV).yml logs api
 
-superuser:
-	docker compose -f docker-compose.$(ENV).yml run --rm api python manage.py createsuperuser
+createadmin:
+	docker compose -f docker-compose.$(ENV).yml run --rm api python booklog/manage.py createadmin
 
+makemigrations:
+	docker compose -f docker-compose.$(ENV).yml run --rm api python booklog/manage.py makemigrations
+
+migrate:
+	docker compose -f docker-compose.$(ENV).yml run --rm api python booklog/manage.py migrate
+
+dbshell:
+	docker compose -f docker-compose.$(ENV).yml run --rm api python booklog/manage.py dbshell

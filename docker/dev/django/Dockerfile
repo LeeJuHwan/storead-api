@@ -8,7 +8,7 @@ ENV PYTHONUNBUFFERED 1
 
 RUN echo "==> Updating ubuntu apt packages..."
 RUN apt-get update \
-    && apt-get install -y gcc python3-dev musl-dev libmagic1 libffi-dev netcat-traditional \
+    && apt-get install -y gcc python3-dev musl-dev libmagic1 libffi-dev netcat-traditional sqlite3 \
     build-essential libpq-dev 
 
 RUN echo "==> Copying poetry files..."

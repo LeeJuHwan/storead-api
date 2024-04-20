@@ -8,7 +8,7 @@ from core_apps.common.models import TimeStampedModel
 class Profile(TimeStampedModel):
     user = models.OneToOneField(SocialUser, on_delete=models.CASCADE, related_name="profile")
     about_me = models.TextField(verbose_name=_("about me"), default=_("say something about yourself"))
-    profile_photo = models.ImageField(verbose_name=_("profile photo"), upload_to="profile_photo")
+    profile_photo = models.ImageField(verbose_name=_("profile photo"), upload_to="profile_photo", null=True)
     followers = models.ManyToManyField(
         "self",
         symmetrical=False,  # NOTE: Follow asymmetric relationships, not each other
@@ -17,7 +17,7 @@ class Profile(TimeStampedModel):
     )
 
     def __str__(self):
-        return f"{self.user.name}'s Profile"
+        return f"{self.user.username}'s Profile"
 
     def follow(self, profile):
         self.followers.add(profile)

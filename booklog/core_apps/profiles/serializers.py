@@ -4,7 +4,7 @@ from .models import Profile
 
 
 class ProfileSerializer(serializers.ModelSerializer):
-    name = serializers.CharField(source="user.name")
+    name = serializers.CharField(source="user.username")
     profile_photo = serializers.SerializerMethodField()
 
     class Meta:
@@ -17,7 +17,7 @@ class ProfileSerializer(serializers.ModelSerializer):
         ]
 
     def get_profile_photo(self, obj):
-        return obj.profile_photo
+        return obj.profile_photo.url if obj.profile_photo else None
 
 
 class UpdateProfileSerializer(serializers.ModelSerializer):

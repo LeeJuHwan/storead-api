@@ -12,10 +12,10 @@ class ProfileDetailAPIView(generics.RetrieveAPIView):
     renderer_classes = [ProfileJSONRenderer]
 
     def get_queryset(self):
-        queryset = Profile.objects.select_related("user")  # NOTE: relationship table ORM
+        queryset = Profile.objects.select_related("user")
         return queryset
 
     def get_object(self):
         user = self.request.user
-        profile = self.get_queryset().first()
+        profile = self.get_queryset().get(user=user)
         return profile

@@ -1,19 +1,19 @@
 from django.contrib.auth import forms as admin_forms
 from django.contrib.auth import get_user_model
 
-from .models import SocialUser
+from .models import Admin
 
 User = get_user_model()
 
 
 class UserChangeForm(admin_forms.UserChangeForm):
     class Meta(admin_forms.UserChangeForm.Meta):
-        model = User
+        model = Admin
 
 
 class UserCreationForm(admin_forms.UserCreationForm):
     class Meta(admin_forms.UserCreationForm.Meta):
-        model = User
+        model = Admin
         fields = ["username"]
 
     error_messages = {
@@ -23,9 +23,9 @@ class UserCreationForm(admin_forms.UserCreationForm):
 
 class SocialUserCreationForm(admin_forms.UserCreationForm):
     class Meta(admin_forms.UserCreationForm.Meta):
-        model = SocialUser
-        fields = ["uuid", "name", "provider"]
+        model = User
+        fields = ["uuid", "username", "provider"]
 
     error_messages = {
-        "name": "A user with this username already exists.",
+        "username": "A user with this username already exists.",
     }

@@ -26,10 +26,10 @@ class SocialServiceMixin(APIView, SocialOAuthService):
                 response_message = {"error": "no matching social type"}
                 return Response(response_message, status=status.HTTP_400_BAD_REQUEST)
 
-            return self.login(user)
+            return self.social_login(user)
 
         except SocialUser.DoesNotExist:
-            self.register(user_profile_request)
+            return self.register(user_profile_request)
 
         except Exception as e:
             response_message = {"error": str(e)}

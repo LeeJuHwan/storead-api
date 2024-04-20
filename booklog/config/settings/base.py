@@ -111,10 +111,11 @@ AUTH_PASSWORD_VALIDATORS = [
 
 REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        "rest_framework.permissions.IsAuthenticated",
     ],
-
-    # "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "dj_rest_auth.jwt_auth.JWTCookieAuthentication",
+    ],
 }
 
 REST_USE_JWT = True
@@ -122,8 +123,8 @@ REST_AUTH = {
     "SESSION_LOGIN": False,
     "USE_JWT": True,
     'JWT_AUTH_HTTPONLY': True,
-    "JWT_AUTH_COOKIE": "booklog-access-token",
-    "JWT_AUTH_REFRESH_COOKIE": "booklog-refresh-token",
+    "JWT_AUTH_COOKIE": "access-token",
+    "JWT_AUTH_REFRESH_COOKIE": "refresh-token",
 }
 
 
@@ -131,10 +132,14 @@ SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
     "SIGNING_KEY": SECRET_KEY,
-    "USER_ID_FIELD": "pkid",
-    "USER_ID_CLAIM": "pkid",
+    "USER_ID_FIELD": "uuid",
+    "USER_ID_CLAIM": "user_id",
 }
 
+
+AUTHENTICATION_BACKENDS = [
+    'core_apps.social_users.admin.AdminAuthBackend'
+]
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
@@ -151,17 +156,17 @@ SITE_ID = 1
 
 ADMIN_URL = "superadmin/"
 
-AUTH_USER_MODEL = "social_users.Admin"
+AUTH_USER_MODEL = "social_users.SocialUser"
 
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 STATIC_URL = "/staticfiles/"
-STATIC_ROOT = str(ROOT_DIR / "staticfiles")
+STATIC_ROOT = str(ROOT_DIR.parent / "staticfiles")
 
 MEDIA_URL = "/mediafiles/"
-MEDIA_ROOT = str(ROOT_DIR / "mediafiles")
+MEDIA_ROOT = str(ROOT_DIR.parent / "mediafiles")
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field

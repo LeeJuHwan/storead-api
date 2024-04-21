@@ -12,6 +12,8 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from .domain import (KakaoAuth, GoogleAuth, GithubAuth,
                      PlatformRequestUrl, SocialPlatform)
 from .models import SocialUser
+from .exceptions import (InvalidAuthorizationCode, DoesNotSupportPlatform,
+                         PlatformServerException, EmptyTokenException)
 
 
 SOCIAL_TYPES = Union[GoogleAuth, KakaoAuth, GithubAuth]
@@ -67,8 +69,7 @@ class SocialOAuthService:
         platform_request_url: Optional[str] = getattr(PlatformRequestUrl, self.platform, None)
 
         if not platform_request_url:
-            return Response({"error": f"{self.platform} is not supported"},
-                            status=status.HTTP_400_BAD_REQUEST)
+            raise DoesNotSupportPlatform()
 
         token_request_call_endpoint: str = platform_request_url.format(**self.auth)
         return requests.post(token_request_call_endpoint)
@@ -78,7 +79,7 @@ class SocialOAuthService:
         Access token by the authorization code.
         """
         if not code:
-            return Response({"error": "not found authorization code"}, status=status.HTTP_400_BAD_REQUEST)
+            raise InvalidAuthorizationCode()
         self._add_authorize_code(code)
 
         token_req: RequestsResponse = self._request_access_token()
@@ -87,12 +88,11 @@ class SocialOAuthService:
         error: Optional[str] = token_response.get("error")
         if error:
             error_description: str = token_response.get("error_description")
-            return Response({"error": f"{error} - error_description: {error_description}"},
-                            status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            raise PlatformServerException(error, error_description)
 
         access_token: Optional[str] = token_response.get("access_token")
         if not access_token:
-            return Response({"error": "access_token is not found"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            raise EmptyTokenException()
 
         return access_token
 
@@ -104,8 +104,9 @@ class SocialOAuthService:
         response_status_code: int = user_profile.status_code
 
         if response_status_code != 200:
-            return Response({"error": f"Failed to retrieve user profile. Status code: {response_status_code}."
-                            "The access token may be invalid or expired."}, status=status.HTTP_400_BAD_REQUEST)
+            error_description = "Failed to retrieve user profile The access token may be invalid or expired."
+            raise PlatformServerException(response_status_code, error_description)
+
         return user_profile.json()
 
     def get_user_uuid(self, user_profile: Dict[str, str | int]) -> str:
@@ -126,7 +127,7 @@ class SocialOAuthService:
         access_token_lifetime: timedelta = settings.SIMPLE_JWT['ACCESS_TOKEN_LIFETIME']
         refresh_token_lifetime: timedelta = settings.SIMPLE_JWT['REFRESH_TOKEN_LIFETIME']
 
-        data = {"msg": "successfully logged in"}
+        data = {"detail": "successfully logged in"}
         response: Response = Response(data, status=status.HTTP_200_OK)
 
         # NOTE: remove sametime option -> use default to possible different sites receive cookies
@@ -134,6 +135,12 @@ class SocialOAuthService:
         response.set_cookie("refresh_token", str(refresh), httponly=True, max_age=refresh_token_lifetime)
         update_last_login(None, user)  # NOTE: update social user last login field
 
+        return response
+
+    def social_logout(self) -> Response:
+        response = Response({'message': 'Success Logout'}, status=status.HTTP_200_OK)
+        response.delete_cookie("access_token")
+        response.delete_cookie("refresh_token")
         return response
 
     def register(self, user_profile: Dict[str, str | int]) -> Response:

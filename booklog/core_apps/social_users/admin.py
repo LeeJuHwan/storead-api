@@ -11,6 +11,12 @@ from .models import Admin
 User = get_user_model()
 
 
+@admin.action(description="선택된 사용자 삭제")
+def delete_user_and_profile(modeladmin, request, queryset):
+    for user in queryset:
+        user.delete()
+
+
 class AdminAuthBackend(BaseBackend):
     def authenticate(self, request, username=None, password=None, **kwargs):
         try:
@@ -32,9 +38,6 @@ class UserAdmin(BaseUserAdmin):
     form = UserChangeForm
     add_form = UserCreationForm
     model = Admin
-
-    def delete_model(self, request, obj):
-        obj.delete()
 
     list_display = [
         "id",
@@ -69,6 +72,7 @@ class UserAdmin(BaseUserAdmin):
     )
 
     search_fields = ["username",]
+    actions = [delete_user_and_profile]
 
 
 class SocialAccount(admin.ModelAdmin):
@@ -76,9 +80,6 @@ class SocialAccount(admin.ModelAdmin):
     form = UserChangeForm
     add_form = SocialUserCreationForm
     model = User
-
-    def delete_model(self, request, obj):
-        obj.delete()
 
     list_display = [
         "pkid",
@@ -100,6 +101,7 @@ class SocialAccount(admin.ModelAdmin):
     ]
 
     search_fields = ["username", "provider"]
+    actions = [delete_user_and_profile]
 
 
 admin.site.register(Admin, UserAdmin)

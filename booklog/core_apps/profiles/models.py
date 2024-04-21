@@ -17,7 +17,7 @@ class Profile(TimeStampedModel):
     )
 
     def __str__(self):
-        return f"{self.user.username}'s Profile"
+        return f"{self.user.username}'s Profile" if self.user.username else "Unkown's Profile"
 
     def follow(self, profile):
         self.followers.add(profile)

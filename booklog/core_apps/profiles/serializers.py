@@ -6,12 +6,13 @@ from .exceptions import EmptyUserNameException
 
 class ProfileSerializer(serializers.ModelSerializer):
     name = serializers.CharField(source="user.username")
+    user_id = serializers.CharField(source="user.uuid")
     profile_photo = serializers.SerializerMethodField()
 
     class Meta:
         model = Profile
         fields = [
-            "id",
+            "user_id",
             "name",
             "profile_photo",
             "about_me",
@@ -51,3 +52,16 @@ class UpdateProfileSerializer(serializers.ModelSerializer):
         instance.save()
 
         return instance
+
+
+class FollowingSerializer(serializers.ModelSerializer):
+    name = serializers.CharField(source="user.username", read_only=True)
+
+    class Meta:
+        model = Profile
+        fields = [
+            "id",
+            "name",
+            "profile_photo",
+            "about_me",
+        ]

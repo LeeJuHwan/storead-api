@@ -25,8 +25,5 @@ class Profile(TimeStampedModel):
     def unfollow(self, profile):
         self.followers.remove(profile)
 
-    def follower_list(self, profile):
-        self.followers.all(profile)
-
     def is_following(self, profile):
         return self.followers.filter(pkid=profile.pkid).exists()

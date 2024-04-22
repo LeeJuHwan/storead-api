@@ -72,7 +72,7 @@ class SocialOAuthService:
             raise DoesNotSupportPlatform()
 
         token_request_call_endpoint: str = platform_request_url.format(**self.auth)
-        return requests.post(token_request_call_endpoint)
+        return requests.post(token_request_call_endpoint, headers={"Accept": "application/json"})
 
     def get_access_token(self, code: Optional[str]) -> str:
         """
@@ -100,7 +100,9 @@ class SocialOAuthService:
         """
         Get user profile by the access token.
         """
-        user_profile: RequestsResponse = requests.get(f"{self.oauth_request_url}?access_token={access_token}")
+        headers = {"Authorization": f"Bearer {access_token}"}
+        user_profile: RequestsResponse = requests.get(f"{self.oauth_request_url}?access_token={access_token}",
+                                                      headers=headers)
         response_status_code: int = user_profile.status_code
 
         if response_status_code != 200:

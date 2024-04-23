@@ -20,7 +20,7 @@ class Recommend(TimeStampedModel):
         ordering = ["-created_at"]
 
     def __str__(self):
-        return f"{self.user.name} recommends {self.article.title}"
+        return f"{self.user.username} recommends {self.article.title}"
 
 
 class ArticleView(TimeStampedModel):
@@ -40,7 +40,7 @@ class ArticleView(TimeStampedModel):
         unique_together = ("article", "user", "viewer_ip")
 
     def __str__(self):
-        return f"{self.article.title} viewed by {self.user.name if self.user else 'Anonymous'}"
+        return f"{self.article.title} viewed by {self.user.username if self.user else 'Anonymous'}"
 
     @classmethod
     def record_view(cls, article, user, viewer_ip):

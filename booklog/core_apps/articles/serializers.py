@@ -12,7 +12,7 @@ class TagListField(serializers.Field):
         if not isinstance(data, list):
             raise serializers.ValidationError("Expected a list of tags")
 
-        tag_objects = [tag_name.strip() for tag_name in data if not tag_name]
+        tag_objects = [tag_name.strip() for tag_name in data if tag_name]
         return tag_objects
 
 

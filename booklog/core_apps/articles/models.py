@@ -67,7 +67,7 @@ class Article(TimeStampedModel):
         verbose_name_plural = _("Article")
 
     def __str__(self):
-        return f"{self.author.name}'s {self.title}"
+        return f"{self.author.username}'s {self.title}"
 
     @property
     def estimated_reading_time(self) -> str:

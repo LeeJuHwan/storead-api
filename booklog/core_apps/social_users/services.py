@@ -111,6 +111,17 @@ class SocialOAuthService:
 
         return user_profile.json()
 
+    def get_username(self, user_profile: Dict[str, str | Dict]) -> str:
+        """
+        Get user username by the user profile.
+        """
+        username = user_profile.get("name")
+
+        if not username:
+            uuid = self.get_user_uuid(user_profile)[:4]
+            return f"Unkown{uuid}"
+        return username
+
     def get_user_uuid(self, user_profile: Dict[str, str | int]) -> str:
         """
         Get user uuid by the user profile.
@@ -119,7 +130,7 @@ class SocialOAuthService:
 
         if not uuid:
             raise ValueError("user_id is not found into user profile")
-        return uuid
+        return str(uuid)
 
     def social_login(self, user: SocialUser) -> Response:
         """
@@ -149,10 +160,11 @@ class SocialOAuthService:
         """
         Register a new social user and redirect login method.
         """
+        username = self.get_username(user_profile)
 
         user: SocialUser = SocialUser.objects.create(
             uuid=self.get_user_uuid(user_profile),
-            username=user_profile.get("name", ""),
+            username=username,
             provider=self.platform,
         )
         return self.social_login(user)

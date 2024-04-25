@@ -1,3 +1,4 @@
+from typing import Dict
 from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
@@ -41,15 +42,44 @@ class GoogleLogin(SocialLoginServiceMixin):
     platform = "google"
     uuid_key = "user_id"
 
+    def get_username(self, user_profile: Dict[str, str | Dict]) -> str:
+        user_email = user_profile.get("email")
+
+        if not user_email:
+            uuid = self.get_user_uuid(user_profile)[:4]
+            return f"Unkown{uuid}"
+
+        return user_email.split("@")[0]
+
 
 class KakaoLogin(SocialLoginServiceMixin):
     platform = "kakao"
     uuid_key = "id"
 
+    def get_username(self, user_profile: Dict[str, str | Dict]) -> str:
+        kakao_account = user_profile.get("properties")
+        uuid = self.get_user_uuid(user_profile)[:4]
+
+        if not kakao_account:
+            return f"Unkown{uuid}"
+
+        return kakao_account.get("nickname", f"Unkown{uuid}")
+
 
 class GithubLogin(SocialLoginServiceMixin):
     platform = "github"
     uuid_key = "id"
+
+    def get_username(self, user_profile: Dict[str, str | Dict]) -> str:
+        """
+        Get user username by the user profile.
+        """
+        username = user_profile.get("login")
+
+        if not username:
+            uuid = self.get_user_uuid(user_profile)[:4]
+            return f"Unkown{uuid}"
+        return username
 
 
 class SocialLogutAPI(APIView, SocialOAuthService):

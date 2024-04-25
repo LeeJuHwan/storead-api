@@ -2,6 +2,7 @@ from rest_framework import serializers
 
 from core_apps.articles.models import Article, ArticleView, Recommend
 from core_apps.profiles.serializers import ProfileSerializer
+from core_apps.comments.serializers import CommentSerializer
 
 
 class TagListField(serializers.Field):
@@ -22,6 +23,8 @@ class ArticleSerializer(serializers.ModelSerializer):
     tags = TagListField()
     views = serializers.SerializerMethodField()
     recommend_count = serializers.SerializerMethodField()
+    comments = CommentSerializer(many=True, read_only=True)
+    comments_count = serializers.IntegerField(source="comments.count", read_only=True)
     created_at = serializers.SerializerMethodField()
     updated_at = serializers.SerializerMethodField()
 
@@ -76,6 +79,8 @@ class ArticleSerializer(serializers.ModelSerializer):
             "created_at",
             "updated_at",
             "recommend_count",
+            "comments",
+            "comments_count",
         ]
 
 

@@ -42,6 +42,7 @@ LOCAL_APPS = [
     "core_apps.books",
     "core_apps.profiles",
     "core_apps.comments",
+    "core_apps.ratings",
 ]
 
 

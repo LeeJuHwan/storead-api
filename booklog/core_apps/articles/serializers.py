@@ -22,6 +22,7 @@ class ArticleSerializer(serializers.ModelSerializer):
     estimated_reading_time = serializers.ReadOnlyField()
     tags = TagListField()
     views = serializers.SerializerMethodField()
+    average_rating = serializers.ReadOnlyField()
     recommend_count = serializers.SerializerMethodField()
     comments = CommentSerializer(many=True, read_only=True)
     comments_count = serializers.IntegerField(source="comments.count", read_only=True)
@@ -33,6 +34,9 @@ class ArticleSerializer(serializers.ModelSerializer):
 
     def get_recommend_count(self, obj):
         return obj.recommends.count()
+
+    def get_average_rating(self, obj):
+        return obj.average_rating()
 
     def get_created_at(self, obj):
         now = obj.created_at
@@ -81,6 +85,7 @@ class ArticleSerializer(serializers.ModelSerializer):
             "recommend_count",
             "comments",
             "comments_count",
+            "average_rating",
         ]
 
 

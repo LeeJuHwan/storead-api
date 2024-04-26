@@ -78,3 +78,12 @@ class Article(TimeStampedModel):
 
     def view_recommends(self) -> int:
         return self.article_recommends.count()
+
+    def average_rating(self):
+        ratings = self.ratings.all()
+
+        if ratings.count() > 0:
+            total_rating = sum(rating.rating for rating in ratings)
+            average_rating = total_rating / ratings.count()
+            return round(average_rating, 2)
+        return None

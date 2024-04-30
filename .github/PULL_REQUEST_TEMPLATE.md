@@ -9,10 +9,10 @@
 ### :pencil2: Changes
 ---
 > issue number
-- [resolve] 
+- [resolve]
 
 > 내용
-1. 
-2. 
-3. 
-4. 
+1.
+2.
+3.
+4.

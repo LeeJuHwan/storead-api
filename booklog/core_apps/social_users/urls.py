@@ -1,7 +1,7 @@
-from rest_framework_simplejwt.views import TokenVerifyView
 from django.urls import path
-from . import views
+from rest_framework_simplejwt.views import TokenVerifyView
 
+from . import views
 
 urlpatterns = [
     path("connections/google/", views.GoogleLogin.as_view(), name="google_login"),

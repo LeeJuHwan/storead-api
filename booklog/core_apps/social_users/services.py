@@ -1,20 +1,28 @@
-import requests
-from requests.models import Response as RequestsResponse
 from datetime import timedelta
-from typing import Dict, Union, Optional
+from typing import Dict, Optional, Union
 
+import requests
 from django.conf import settings
 from django.contrib.auth.models import update_last_login
+from requests.models import Response as RequestsResponse
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from .domain import (KakaoAuth, GoogleAuth, GithubAuth,
-                     PlatformRequestUrl, SocialPlatform)
+from .domain import (
+    GithubAuth,
+    GoogleAuth,
+    KakaoAuth,
+    PlatformRequestUrl,
+    SocialPlatform,
+)
+from .exceptions import (
+    DoesNotSupportPlatform,
+    EmptyTokenException,
+    InvalidAuthorizationCode,
+    PlatformServerException,
+)
 from .models import SocialUser
-from .exceptions import (InvalidAuthorizationCode, DoesNotSupportPlatform,
-                         PlatformServerException, EmptyTokenException)
-
 
 SOCIAL_TYPES = Union[GoogleAuth, KakaoAuth, GithubAuth]
 
@@ -101,8 +109,9 @@ class SocialOAuthService:
         Get user profile by the access token.
         """
         headers = {"Authorization": f"Bearer {access_token}"}
-        user_profile: RequestsResponse = requests.get(f"{self.oauth_request_url}?access_token={access_token}",
-                                                      headers=headers)
+        user_profile: RequestsResponse = requests.get(
+            f"{self.oauth_request_url}?access_token={access_token}", headers=headers
+        )
         response_status_code: int = user_profile.status_code
 
         if response_status_code != 200:
@@ -137,8 +146,8 @@ class SocialOAuthService:
         Login a social user.
         """
         refresh: RefreshToken = RefreshToken.for_user(user)
-        access_token_lifetime: timedelta = settings.SIMPLE_JWT['ACCESS_TOKEN_LIFETIME']
-        refresh_token_lifetime: timedelta = settings.SIMPLE_JWT['REFRESH_TOKEN_LIFETIME']
+        access_token_lifetime: timedelta = settings.SIMPLE_JWT["ACCESS_TOKEN_LIFETIME"]
+        refresh_token_lifetime: timedelta = settings.SIMPLE_JWT["REFRESH_TOKEN_LIFETIME"]
 
         data = {"detail": "successfully logged in"}
         response: Response = Response(data, status=status.HTTP_200_OK)
@@ -151,7 +160,7 @@ class SocialOAuthService:
         return response
 
     def social_logout(self) -> Response:
-        response = Response({'message': 'Success Logout'}, status=status.HTTP_200_OK)
+        response = Response({"message": "Success Logout"}, status=status.HTTP_200_OK)
         response.delete_cookie("access_token")
         response.delete_cookie("refresh_token")
         return response

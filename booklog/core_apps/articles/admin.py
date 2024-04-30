@@ -4,7 +4,15 @@ from . import models
 
 
 class ArticleAdmin(admin.ModelAdmin):
-    list_display = ["pkid", "author", "title", "slug", "view_count", "view_recommends", "estimated_reading_time"]
+    list_display = [
+        "pkid",
+        "author",
+        "title",
+        "slug",
+        "view_count",
+        "view_recommends",
+        "estimated_reading_time",
+    ]
     list_display_links = ["pkid", "author"]
     list_filter = ["created_at", "updated_at"]
     search_fields = ["title", "body", "tags"]

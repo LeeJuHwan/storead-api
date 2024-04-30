@@ -1,11 +1,16 @@
 from django.urls import path
 
-from .views import RatingCreateView
+from . import views
 
 urlpatterns = [
     path(
         "rate_article/<uuid:article_id>/",
-        RatingCreateView.as_view(),
+        views.RatingCreateView.as_view(),
         name="rating-create",
-    )
+    ),
+    path(
+        "rate_article/<uuid:article_id>/update/",
+        views.RatingUpdateView.as_view(),
+        name="rating-update",
+    ),
 ]

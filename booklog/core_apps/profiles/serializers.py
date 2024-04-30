@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
-from .models import Profile
 from .exceptions import EmptyUserNameException
+from .models import Profile
 
 
 class ProfileSerializer(serializers.ModelSerializer):
@@ -36,8 +36,8 @@ class UpdateProfileSerializer(serializers.ModelSerializer):
     # NOTE: 유저랑 관계형을 맺고 있기 때문에 upadte를 직접적으로 명시 해야함
     def update(self, instance, validated_data):
         self.fields.pop("name")
-        user_data = validated_data.pop('user', {})
-        username = user_data.get('username')
+        user_data = validated_data.pop("user", {})
+        username = user_data.get("username")
 
         if username:
             instance.user.username = username

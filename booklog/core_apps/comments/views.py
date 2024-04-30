@@ -39,7 +39,5 @@ class CommentUpdateDeleteView(generics.RetrieveUpdateDestroyAPIView):
         comment = self.get_object()
 
         if user != comment.user:
-            raise PermissionDenied(
-                "You do not have permission to delete this comment."
-            )
+            raise PermissionDenied("You do not have permission to delete this comment.")
         instance.delete()

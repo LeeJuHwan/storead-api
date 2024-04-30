@@ -1,7 +1,7 @@
-from pathlib import Path
 from datetime import timedelta
-import environ
+from pathlib import Path
 
+import environ
 from utils.common.load_yaml import load_yaml_file
 
 env = environ.Env()
@@ -124,7 +124,7 @@ REST_USE_JWT = True
 REST_AUTH = {
     "SESSION_LOGIN": False,
     "USE_JWT": True,
-    'JWT_AUTH_HTTPONLY': True,
+    "JWT_AUTH_HTTPONLY": True,
     "JWT_AUTH_COOKIE": "access-token",
     "JWT_AUTH_REFRESH_COOKIE": "refresh-token",
 }
@@ -139,9 +139,7 @@ SIMPLE_JWT = {
 }
 
 
-AUTHENTICATION_BACKENDS = [
-    'core_apps.social_users.admin.AdminAuthBackend'
-]
+AUTHENTICATION_BACKENDS = ["core_apps.social_users.admin.AdminAuthBackend"]
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/

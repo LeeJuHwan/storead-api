@@ -1,17 +1,18 @@
 from django.shortcuts import get_object_or_404
-from rest_framework import generics
-from rest_framework import status
+from rest_framework import generics, status
 from rest_framework.exceptions import NotFound
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from .exceptions import (
+    AlreadyFollowing,
+    CantFollowYourSelf,
+    CantUnfollowNotFollowingUser,
+)
 from .models import Profile
 from .renderers import ProfileJSONRenderer
-from .serializers import (ProfileSerializer, UpdateProfileSerializer,
-                          FollowingSerializer)
-from .exceptions import (CantFollowYourSelf, AlreadyFollowing,
-                         CantUnfollowNotFollowingUser)
+from .serializers import FollowingSerializer, ProfileSerializer, UpdateProfileSerializer
 
 
 class MyProfileDetailAPIView(generics.RetrieveAPIView):

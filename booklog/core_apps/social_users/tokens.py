@@ -1,8 +1,9 @@
+from typing import Optional
+
 from django.conf import settings
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
-from typing import Optional
 
 from .exceptions import EmptyTokenException
 
@@ -21,7 +22,7 @@ def token_refresh(request) -> Response:
 
     try:
         refresh = RefreshToken(refresh_token)
-        access_token_lifetime = settings.SIMPLE_JWT['ACCESS_TOKEN_LIFETIME']
+        access_token_lifetime = settings.SIMPLE_JWT["ACCESS_TOKEN_LIFETIME"]
         response.set_cookie("access_token", str(refresh.access_token), max_age=access_token_lifetime)
 
     except Exception as e:

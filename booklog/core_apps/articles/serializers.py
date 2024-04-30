@@ -1,8 +1,7 @@
-from rest_framework import serializers
-
 from core_apps.articles.models import Article, ArticleView, Recommend
-from core_apps.profiles.serializers import ProfileSerializer
 from core_apps.comments.serializers import CommentSerializer
+from core_apps.profiles.serializers import ProfileSerializer
+from rest_framework import serializers
 
 
 class TagListField(serializers.Field):
@@ -22,21 +21,18 @@ class ArticleSerializer(serializers.ModelSerializer):
     estimated_reading_time = serializers.ReadOnlyField()
     tags = TagListField()
     views = serializers.SerializerMethodField()
-    average_rating = serializers.ReadOnlyField()
     recommend_count = serializers.SerializerMethodField()
     comments = CommentSerializer(many=True, read_only=True)
     comments_count = serializers.IntegerField(source="comments.count", read_only=True)
     created_at = serializers.SerializerMethodField()
     updated_at = serializers.SerializerMethodField()
+    author_rating = serializers.ReadOnlyField()
 
     def get_views(self, obj):
         return ArticleView.objects.filter(article=obj).count()
 
     def get_recommend_count(self, obj):
         return obj.recommends.count()
-
-    def get_average_rating(self, obj):
-        return obj.average_rating()
 
     def get_created_at(self, obj):
         now = obj.created_at
@@ -47,6 +43,9 @@ class ArticleSerializer(serializers.ModelSerializer):
         then = obj.updated_at
         formatted_date = then.strftime("%Y/%m/%d, %H:%M:%S")
         return formatted_date
+
+    def get_author_rating(self, obj):
+        return obj.author_rating()
 
     def create(self, validated_data):
         tags = validated_data.pop("tags")
@@ -85,7 +84,7 @@ class ArticleSerializer(serializers.ModelSerializer):
             "recommend_count",
             "comments",
             "comments_count",
-            "average_rating",
+            "author_rating",
         ]
 
 

@@ -1,11 +1,11 @@
 from autoslug import AutoSlugField
+from core_apps.books.models import Book
+from core_apps.common.models import TimeStampedModel
+from core_apps.social_users.models import SocialUser
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from taggit.managers import TaggableManager
 
-from core_apps.common.models import TimeStampedModel
-from core_apps.social_users.models import SocialUser
-from core_apps.books.models import Book
 from .read_time_engine import ArticleReadTimeEngine
 
 
@@ -24,15 +24,9 @@ class Recommend(TimeStampedModel):
 
 
 class ArticleView(TimeStampedModel):
-    article = models.ForeignKey(
-        "Article", on_delete=models.CASCADE, related_name="article_views"
-    )
-    user = models.ForeignKey(
-        SocialUser, on_delete=models.SET_NULL, null=True, related_name="user_views"
-    )
-    viewer_ip = models.GenericIPAddressField(
-        verbose_name=_("viewer IP"), null=True, blank=True
-    )
+    article = models.ForeignKey("Article", on_delete=models.CASCADE, related_name="article_views")
+    user = models.ForeignKey(SocialUser, on_delete=models.SET_NULL, null=True, related_name="user_views")
+    viewer_ip = models.GenericIPAddressField(verbose_name=_("viewer IP"), null=True, blank=True)
 
     class Meta:
         verbose_name = _("Article View")
@@ -44,9 +38,7 @@ class ArticleView(TimeStampedModel):
 
     @classmethod
     def record_view(cls, article, user, viewer_ip):
-        view, _ = cls.objects.get_or_create(
-            article=article, user=user, viewer_ip=viewer_ip
-        )
+        view, _ = cls.objects.get_or_create(article=article, user=user, viewer_ip=viewer_ip)
         view.save()
 
 
@@ -79,11 +71,8 @@ class Article(TimeStampedModel):
     def view_recommends(self) -> int:
         return self.article_recommends.count()
 
-    def average_rating(self):
-        ratings = self.ratings.all()
-
-        if ratings.count() > 0:
-            total_rating = sum(rating.rating for rating in ratings)
-            average_rating = total_rating / ratings.count()
-            return round(average_rating, 2)
+    def author_rating(self):
+        author_rating = self.ratings.filter(user=self.author).first()
+        if author_rating:
+            return author_rating.rating
         return None

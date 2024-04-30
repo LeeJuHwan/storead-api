@@ -1,8 +1,7 @@
+from core_apps.common.models import TimeStampedModel
+from core_apps.social_users.models import SocialUser
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-
-from core_apps.social_users.models import SocialUser
-from core_apps.common.models import TimeStampedModel
 
 
 class Profile(TimeStampedModel):

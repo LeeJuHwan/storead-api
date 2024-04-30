@@ -3,10 +3,10 @@ from django.shortcuts import get_object_or_404
 from rest_framework import generics, permissions, status
 from rest_framework.response import Response
 
+from .exceptions import DuplicateRecommendArticle
 from .models import Article, ArticleView, Recommend
 from .permissions import IsOwnerOrReadOnly
 from .serializers import ArticleSerializer, RecommendSerializer
-from .exceptions import DuplicateRecommendArticle
 
 User = get_user_model()
 
@@ -40,9 +40,7 @@ class ArticleRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
         serializer = self.get_serializer(instance)
 
         viewer_ip = request.META.get("REMOTE_ADDR", None)
-        ArticleView.record_view(
-            article=instance, user=request.user, viewer_ip=viewer_ip
-        )
+        ArticleView.record_view(article=instance, user=request.user, viewer_ip=viewer_ip)
         return Response(serializer.data)
 
     def perform_destroy(self, instance):

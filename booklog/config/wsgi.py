@@ -9,8 +9,8 @@ https://docs.djangoproject.com/en/5.0/howto/deployment/wsgi/
 
 import os
 
-from django.core.wsgi import get_wsgi_application
 from config.settings.base import env
+from django.core.wsgi import get_wsgi_application
 
 _env = env.str("DJANGO_ENV", default="dev")
 

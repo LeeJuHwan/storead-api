@@ -15,15 +15,11 @@ class CantUnfollowNotFollowingUser(APIException):
     status_code = 400
 
     def __init__(self, username):
-        self.detail = {
-            "detail": f"you can't unfollow {username}, since you were not following then in the first place"
-        }
+        self.detail = {"detail": f"you can't unfollow {username}, since you were not following then in the first place"}
 
 
 class AlreadyFollowing(APIException):
     status_code = 400
 
     def __init__(self, username):
-        self.detail = {
-            "detail": f"you are already following {username}"
-        }
+        self.detail = {"detail": f"you are already following {username}"}

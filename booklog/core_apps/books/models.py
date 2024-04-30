@@ -1,7 +1,6 @@
+from core_apps.common.models import TimeStampedModel
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-
-from core_apps.common.models import TimeStampedModel
 
 
 class Book(TimeStampedModel):
@@ -10,9 +9,14 @@ class Book(TimeStampedModel):
     author = models.CharField(verbose_name=_("Author"), max_length=255)
     published_date = models.DateField(verbose_name=_("Published Date"))
     description = models.TextField(verbose_name=_("Description"))
-    thumbnail_url = models.ImageField(verbose_name=_("Thumbnail"), upload_to="book_thumbnails")
+    thumbnail_url = models.ImageField(
+        verbose_name=_("Thumbnail"),
+        upload_to="book_thumbnails",
+        default="default_book.png",
+    )
 
     class Meta:
+        db_table = "books"
         verbose_name = _("Book")
         verbose_name_plural = _("Books")
 

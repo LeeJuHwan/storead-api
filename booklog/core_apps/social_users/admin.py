@@ -1,12 +1,11 @@
 from django.contrib import admin
 from django.contrib.auth import get_user_model
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.backends import BaseBackend
+from django.utils.translation import gettext_lazy as _
 
-from .forms import UserChangeForm, UserCreationForm, SocialUserCreationForm
+from .forms import SocialUserCreationForm, UserChangeForm, UserCreationForm
 from .models import Admin
-
 
 User = get_user_model()
 
@@ -71,7 +70,9 @@ class UserAdmin(BaseUserAdmin):
         (_("Important Dates"), {"fields": ("last_login", "date_joined")}),
     )
 
-    search_fields = ["username",]
+    search_fields = [
+        "username",
+    ]
     actions = [delete_user_and_profile]
 
 

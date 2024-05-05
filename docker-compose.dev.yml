@@ -5,7 +5,7 @@ services:
     build:
       context: .
       dockerfile: docker/dev/django/Dockerfile
-    command: "python3 booklog/manage.py runserver 0:8000"
+    command: "python3 booklog/manage.py runserver 0:8000 --settings=config.settings.dev"
     volumes:
       - .:/app
       - static_volume:/app/staticfiles

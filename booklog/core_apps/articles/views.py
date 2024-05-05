@@ -30,13 +30,18 @@ class ArticleRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Article.objects.all()
     serializer_class = ArticleSerializer
     permission_classes = [permissions.IsAuthenticated, IsOwnerOrReadOnly]
-    lookup_field = "id"
+    lookup_field = "article_id"
 
-    def perform_update(self, serializer):
-        serializer.save(author=self.request.user)
+    def get_object(self):
+        article_id = self.kwargs.get("article_id")
+        obj = get_object_or_404(Article, id=article_id)
+        return obj
 
-    def retrieve(self, request, id, *args, **kwargs):
-        instance = get_object_or_404(Article, id=id)
+    def perform_update(self, instance):
+        instance.save(author=self.request.user)
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
         serializer = self.get_serializer(instance)
 
         viewer_ip = request.META.get("REMOTE_ADDR", None)

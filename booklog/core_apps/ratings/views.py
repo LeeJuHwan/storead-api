@@ -1,61 +1,43 @@
-from core_apps.articles.models import Article
-from core_apps.ratings.exceptions import (
-    ArticleIdNotFound,
-    OnlyAuthorRated,
-    YouDontHaveRated,
-    YouhaveAlreadyRated,
-)
-from rest_framework import generics
+from core_apps.articles.queries import ArticleSelector
+from rest_framework import status, views
+from rest_framework.response import Response
 
-from .models import Rating
 from .permissions import IsOwnerOrReadOnly
+from .queries import RatingSelector
 from .serializers import RatingSerializer
 
 
-class RatingArticleSelector:
-    def get_article(self, article_id):
-        if article_id:
-            try:
-                # NOTE: 작성자만 본인이 읽은 책에 대한 평점만 입력 할 수 있다
-                return Article.objects.get(author=self.request.user, id=article_id)
-            except Article.DoesNotExist:
-                raise OnlyAuthorRated
-        raise ArticleIdNotFound
-
-
-class RatingCreateView(generics.CreateAPIView, RatingArticleSelector):
-    queryset = Rating.objects.all()
-    serializer_class = RatingSerializer
-
-    def perform_create(self, serializer):
-        article = self.get_article(self.kwargs.get("article_id"))
-        user = self.request.user
-
-        if Rating.objects.filter(user=user, article=article).exists():
-            raise YouhaveAlreadyRated
-
-        serializer.save(user=self.request.user, article=article)
-
-
-class RatingUpdateView(generics.UpdateAPIView, RatingArticleSelector):
-    queryset = Rating.objects.all()
-    serializer_class = RatingSerializer
+class RatingAPIView(views.APIView):
     permission_classes = [IsOwnerOrReadOnly]
+    serializer = RatingSerializer
+    selector = RatingSelector()
 
-    def get_queryset(self):
-        return Rating.objects.select_related("article")
+    def _get_article(self, user, article_id):
+        selector = ArticleSelector()  # NOTE: Singleton instance to reusing
+        return selector.get_article(user, article_id)
 
-    def get_object(self):
-        article_id = self.kwargs.get("article_id")
-        user = self.request.user
-        return self.get_queryset().get(user=user, article__id=article_id)
+    def _validate_user_rating(self, func, *args):
+        func(*args)
 
-    def perform_update(self, serializer):
-        article = self.get_article(self.kwargs.get("article_id"))
-        user = self.request.user
+    def post(self, request, *args, **kwargs):
+        user = request.user
+        article_id = kwargs.get("article_id")
+        article = self._get_article(user, article_id)
+        self._validate_user_rating(self.selector.get_exists_rate_on_article, user, article_id)
 
-        rating = Rating.objects.filter(user=user, article=article).first()
-        if not rating:
-            raise YouDontHaveRated
-
+        serializer = self.serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
         serializer.save(user=user, article=article)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    def put(self, request, *args, **kwargs):
+        user = request.user
+        article_id = kwargs.get("article_id")
+        rating = self.selector.get_rating_select_related(user, article_id)
+        article = self._get_article(user, article_id)
+        self._validate_user_rating(self.selector.get_not_exists_rate_on_article, user, article_id)
+
+        serializer = RatingSerializer(rating, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(user=user, article=article)
+        return Response(serializer.data, status=status.HTTP_200_OK)

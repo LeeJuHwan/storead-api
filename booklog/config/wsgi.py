@@ -8,12 +8,8 @@ https://docs.djangoproject.com/en/5.0/howto/deployment/wsgi/
 """
 
 import os
-
-from config.settings.base import env
 from django.core.wsgi import get_wsgi_application
 
-_env = env.str("DJANGO_ENV", default="dev")
-
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", f"config.settings.{_env}")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings.dev")
 
 application = get_wsgi_application()

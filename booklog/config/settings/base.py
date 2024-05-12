@@ -33,6 +33,7 @@ THIRD_PARTY_APPS = [
     "rest_framework.authtoken",
     "dj_rest_auth",
     "taggit",
+    "drf_spectacular",
 ]
 
 
@@ -112,6 +113,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 
 REST_FRAMEWORK = {
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.IsAuthenticated",
     ],
@@ -120,7 +122,7 @@ REST_FRAMEWORK = {
     ],
 }
 
-REST_USE_JWT = True
+# REST_USE_JWT = True
 REST_AUTH = {
     "SESSION_LOGIN": False,
     "USE_JWT": True,
@@ -157,6 +159,8 @@ SITE_ID = 1
 ADMIN_URL = "superadmin/"
 
 AUTH_USER_MODEL = "social_users.SocialUser"
+
+APPEND_SLASH = False
 
 
 # Static files (CSS, JavaScript, Images)

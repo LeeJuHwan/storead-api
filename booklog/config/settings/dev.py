@@ -1,5 +1,5 @@
-from .base import *  # noqa
-from .base import env
+from config.settings.base import *  # noqa
+from config.swagger import *  # noqa
 
 DEBUG = env.bool("DJANGO_DEBUG", False)
 

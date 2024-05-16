@@ -1,5 +1,5 @@
 """
-    전체 사용자가 등록한 정보 목록 불러오기
+    전체 사용자가 등록한 책 정보 관리
 """
 
 import uuid
@@ -13,12 +13,13 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .docs import BookDetailDocument
+from . import docs
 from .models import Book
 from .queries import BookSelector
 from .serializers import BookListSerializer
 
 
+@docs.BookListAPIViewSchema()
 class BookListAPIView(ListCreateAPIView):
     model = Book
     serializer_class = BookListSerializer
@@ -26,6 +27,33 @@ class BookListAPIView(ListCreateAPIView):
     pagination_class = CommonCursorPagination
     queryset = Book.objects.all()
     ordering_fields = ["created_at"]
+
+    class RequesteSerializer(serializers.Serializer):
+        isbn = serializers.CharField()
+        description = serializers.CharField()
+        title = serializers.CharField()
+        author = serializers.CharField()
+        published_date = serializers.DateField()
+        thumbnail_url = serializers.ImageField()
+
+    class ResponseSerializer(serializers.Serializer):
+        pkid = serializers.IntegerField()
+        id = serializers.UUIDField()
+        created_at = serializers.DateField()
+        isbn = serializers.CharField()
+        title = serializers.CharField()
+        author = serializers.CharField()
+        published_date = serializers.DateField()
+        description = serializers.CharField()
+        thumbnail_url = serializers.ImageField()
+
+    @docs.BookDetailDocument(
+        summary="책 등록 API",
+        request_serializer=RequesteSerializer,
+        response_serializer=ResponseSerializer,
+    )
+    def post(self, request, *args, **kwargs):
+        super().post(request, *args, **kwargs)
 
 
 class BookDetailAPIView(APIView):
@@ -43,7 +71,7 @@ class BookDetailAPIView(APIView):
         description = serializers.CharField()
         thumbnail_url = serializers.ImageField()
 
-    @BookDetailDocument(
+    @docs.BookDetailDocument(
         request_serializer=serializers.UUIDField(),
         response_serializer=ResponseSerializer,
     )

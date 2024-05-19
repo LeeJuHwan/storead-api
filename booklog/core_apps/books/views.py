@@ -5,6 +5,8 @@
 import uuid
 
 from core_apps.common.paginations import CommonCursorPagination
+from core_apps.common.swaggers import UuidSerializer
+from drf_spectacular.utils import extend_schema
 from rest_framework import serializers, status
 from rest_framework.exceptions import NotFound
 from rest_framework.generics import ListCreateAPIView
@@ -13,13 +15,11 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from . import docs
 from .models import Book
 from .queries import BookSelector
 from .serializers import BookListSerializer
 
 
-@docs.BookListAPIViewSchema()
 class BookListAPIView(ListCreateAPIView):
     model = Book
     serializer_class = BookListSerializer
@@ -28,7 +28,7 @@ class BookListAPIView(ListCreateAPIView):
     queryset = Book.objects.all()
     ordering_fields = ["created_at"]
 
-    class RequesteSerializer(serializers.Serializer):
+    class RequestSerializer(serializers.Serializer):
         isbn = serializers.CharField()
         description = serializers.CharField()
         title = serializers.CharField()
@@ -47,13 +47,22 @@ class BookListAPIView(ListCreateAPIView):
         description = serializers.CharField()
         thumbnail_url = serializers.ImageField()
 
-    @docs.BookDetailDocument(
+    @extend_schema(
         summary="책 등록 API",
-        request_serializer=RequesteSerializer,
-        response_serializer=ResponseSerializer,
+        tags=["책"],
+        request=RequestSerializer,
+        responses=ResponseSerializer,
     )
     def post(self, request, *args, **kwargs):
-        super().post(request, *args, **kwargs)
+        return self.create(request, *args, **kwargs)
+
+    @extend_schema(
+        summary="책 목록 조회 API",
+        tags=["책"],
+        responses=ResponseSerializer(many=True),
+    )
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
 
 
 class BookDetailAPIView(APIView):
@@ -62,7 +71,7 @@ class BookDetailAPIView(APIView):
     queryset = Book.objects.all()
     selector = BookSelector()
 
-    class ResponseSerializer(serializers.Serializer):
+    class BookDetailResponse(serializers.Serializer):
         id = serializers.UUIDField()
         isbn = serializers.CharField()
         title = serializers.CharField()
@@ -71,9 +80,11 @@ class BookDetailAPIView(APIView):
         description = serializers.CharField()
         thumbnail_url = serializers.ImageField()
 
-    @docs.BookDetailDocument(
-        request_serializer=serializers.UUIDField(),
-        response_serializer=ResponseSerializer,
+    @extend_schema(
+        summary="책 상세 정보 조회 API",
+        tags=["책"],
+        request=UuidSerializer,
+        responses={status.HTTP_200_OK: BookDetailResponse},
     )
     def get(self, request: Request, book_id: uuid) -> Response:
         book = self.selector.get_book_by_id(book_id)
@@ -81,5 +92,5 @@ class BookDetailAPIView(APIView):
         if not book:
             return NotFound("can't find book")
 
-        serializer = self.ResponseSerializer(book)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        serializer_data = self.BookDetailResponse(book).data
+        return Response(serializer_data, status=status.HTTP_200_OK)

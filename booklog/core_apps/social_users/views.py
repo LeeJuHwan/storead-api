@@ -1,5 +1,7 @@
 from typing import Dict
 
+from core_apps.common.swaggers import OutputSerializer
+from drf_spectacular.utils import OpenApiParameter, extend_schema
 from rest_framework import status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.request import Request
@@ -52,6 +54,17 @@ class GoogleLogin(SocialLoginServiceMixin):
 
         return user_email.split("@")[0]
 
+    @extend_schema(
+        summary="구글 로그인 API",
+        tags=["로그인"],
+        parameters=[
+            OpenApiParameter(name="code", description="구글 플랫폼 서버 인가 코드", required=True, type=str),
+        ],
+        responses=OutputSerializer,
+    )
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
+
 
 class KakaoLogin(SocialLoginServiceMixin):
     platform = "kakao"
@@ -65,6 +78,17 @@ class KakaoLogin(SocialLoginServiceMixin):
             return f"Unkown{uuid}"
 
         return kakao_account.get("nickname", f"Unkown{uuid}")
+
+    @extend_schema(
+        summary="카카오 로그인 API",
+        tags=["로그인"],
+        parameters=[
+            OpenApiParameter(name="code", description="카카오 플랫폼 서버 인가 코드", required=True, type=str),
+        ],
+        responses=OutputSerializer,
+    )
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
 
 
 class GithubLogin(SocialLoginServiceMixin):
@@ -82,10 +106,26 @@ class GithubLogin(SocialLoginServiceMixin):
             return f"Unkown{uuid}"
         return username
 
+    @extend_schema(
+        summary="깃허브 로그인 API",
+        tags=["로그인"],
+        parameters=[
+            OpenApiParameter(name="code", description="깃허브 플랫폼 서버 인가 코드", required=True, type=str),
+        ],
+        responses=OutputSerializer,
+    )
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
+
 
 class SocialLogutAPI(APIView, SocialOAuthService):
     permission_classes = (IsAuthenticated,)
 
+    @extend_schema(
+        summary="소셜 로그아웃 API",
+        tags=["로그인"],
+        responses=OutputSerializer,
+    )
     def post(self, request: Request) -> Response:
         return self.social_logout()
 
@@ -93,5 +133,10 @@ class SocialLogutAPI(APIView, SocialOAuthService):
 class TokenRefreshAPIView(APIView):
     permission_classes = (AllowAny,)
 
+    @extend_schema(
+        summary="토큰 갱신 API",
+        tags=["토큰"],
+        responses=OutputSerializer,
+    )
     def get(self, request: Request) -> Response:
         return token_refresh(request)

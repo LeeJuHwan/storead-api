@@ -149,7 +149,7 @@ class SocialOAuthService:
         access_token_lifetime: timedelta = settings.SIMPLE_JWT["ACCESS_TOKEN_LIFETIME"]
         refresh_token_lifetime: timedelta = settings.SIMPLE_JWT["REFRESH_TOKEN_LIFETIME"]
 
-        data = {"detail": "successfully logged in"}
+        data = {"message": "successfully logged in"}
         response: Response = Response(data, status=status.HTTP_200_OK)
 
         # NOTE: remove sametime option -> use default to possible different sites receive cookies

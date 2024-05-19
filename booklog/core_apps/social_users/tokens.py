@@ -17,7 +17,7 @@ def token_refresh(request) -> Response:
     if not refresh_token:
         raise EmptyTokenException()
 
-    data = {"detail": "successfully refreshed token"}
+    data = {"message": "successfully refreshed token"}
     response: Response = Response(data, status=status.HTTP_200_OK)
 
     try:

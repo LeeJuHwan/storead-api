@@ -1,5 +1,8 @@
+from core_apps.common.paginations import CommonCursorPagination
+from core_apps.common.swaggers import OutputSerializer, UuidSerializer
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
+from drf_spectacular.utils import extend_schema
 from rest_framework import generics, permissions, status
 from rest_framework.response import Response
 
@@ -11,11 +14,11 @@ from .serializers import ArticleSerializer, RecommendSerializer
 User = get_user_model()
 
 
-# TODO: pagination, filter
 class ArticleListCreateView(generics.ListCreateAPIView):
     queryset = Article.objects.all()
     serializer_class = ArticleSerializer
     permission_classes = [permissions.IsAuthenticated]
+    pagination_class = CommonCursorPagination
     ordering_fields = [
         "created_at",
         "updated_at",
@@ -23,7 +26,22 @@ class ArticleListCreateView(generics.ListCreateAPIView):
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
-        # TODO: create a new article logging
+
+    @extend_schema(
+        summary="게시글 목록 조회 API",
+        tags=["게시글"],
+        responses=ArticleSerializer(many=True),
+    )
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+    @extend_schema(
+        summary="게시글 생성 API",
+        tags=["게시글"],
+        responses=ArticleSerializer(many=True),
+    )
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
 
 
 class ArticleRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
@@ -37,9 +55,6 @@ class ArticleRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
         obj = get_object_or_404(Article, id=article_id)
         return obj
 
-    def perform_update(self, instance):
-        instance.save(author=self.request.user)
-
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
         serializer = self.get_serializer(instance)
@@ -48,9 +63,31 @@ class ArticleRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
         ArticleView.record_view(article=instance, user=request.user, viewer_ip=viewer_ip)
         return Response(serializer.data)
 
-    def perform_destroy(self, instance):
-        instance.delete()
-        # TODO: delete instance logging
+    @extend_schema(
+        summary="게시글 수정 API",
+        tags=["게시글"],
+        responses=ArticleSerializer(many=True),
+    )
+    def patch(self, request, *args, **kwargs):
+        return self.partial_update(request, *args, **kwargs)
+
+    @extend_schema(
+        summary="상세 게시글 조회 API",
+        tags=["게시글"],
+        request=UuidSerializer,
+        responses=ArticleSerializer(many=True),
+    )
+    def get(self, request, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs)
+
+    @extend_schema(
+        summary="게시글 삭제 API",
+        tags=["게시글"],
+        request=UuidSerializer,
+        responses=ArticleSerializer(many=True),
+    )
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)
 
 
 class RecommendArticleView(generics.CreateAPIView, generics.DestroyAPIView):
@@ -69,11 +106,26 @@ class RecommendArticleView(generics.CreateAPIView, generics.DestroyAPIView):
         recommend.save()
         return Response(
             {
-                "detail": "recommend added to article",
+                "message": "recommend added to article",
             },
             status=status.HTTP_201_CREATED,
         )
 
+    @extend_schema(
+        summary="게시글 추천 API",
+        tags=["게시글"],
+        request=UuidSerializer,
+        responses=OutputSerializer,
+    )
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+
+    @extend_schema(
+        summary="게시글 추천 취소 API",
+        tags=["게시글"],
+        request=UuidSerializer,
+        responses=OutputSerializer,
+    )
     def delete(self, request, *args, **kwargs):
         user = request.user
         article_id = kwargs.get("article_id")
@@ -82,6 +134,6 @@ class RecommendArticleView(generics.CreateAPIView, generics.DestroyAPIView):
         clap = get_object_or_404(Recommend, user=user, article=article)
         clap.delete()
         return Response(
-            {"detail": "Recommend cancel from article"},
+            {"message": "Recommend cancel from article"},
             status=status.HTTP_204_NO_CONTENT,
         )

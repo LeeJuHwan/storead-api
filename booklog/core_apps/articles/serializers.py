@@ -1,4 +1,7 @@
 from core_apps.articles.models import Article, ArticleView, Recommend
+from core_apps.books.excpetions import BookNotFound
+from core_apps.books.models import Book
+from core_apps.books.serializers import BookListSerializer
 from core_apps.comments.serializers import CommentSerializer
 from core_apps.profiles.serializers import ProfileSerializer
 from rest_framework import serializers
@@ -18,6 +21,7 @@ class TagListField(serializers.Field):
 
 class ArticleSerializer(serializers.ModelSerializer):
     author_info = ProfileSerializer(source="author.profile", read_only=True)
+    book = BookListSerializer(read_only=True)
     estimated_reading_time = serializers.ReadOnlyField()
     tags = TagListField()
     views = serializers.SerializerMethodField()
@@ -48,9 +52,20 @@ class ArticleSerializer(serializers.ModelSerializer):
         return obj.author_rating()
 
     def create(self, validated_data):
+        print(f"create validate data: {validated_data}")
         tags = validated_data.pop("tags")
         article = Article.objects.create(**validated_data)
         article.tags.set(tags)
+
+        # TODO: select query 분리
+        if book_uuid := self.context["request"].data.get("book"):
+            try:
+                book = Book.objects.get(id=book_uuid)
+                article.book = book
+                article.save()
+            except Book.DoesNotExist:
+                raise BookNotFound
+
         return article
 
     def update(self, instance, validated_data):
@@ -59,6 +74,14 @@ class ArticleSerializer(serializers.ModelSerializer):
         instance.description = validated_data.get("description", instance.description)
         instance.body = validated_data.get("body", instance.body)
         instance.updated_at = validated_data.get("updated_at", instance.updated_at)
+
+        # TODO: select query 분리
+        if book_uuid := self.context["request"].data.get("book"):
+            try:
+                book = Book.objects.get(id=book_uuid)
+                instance.book = book
+            except Book.DoesNotExist:
+                raise BookNotFound
 
         if "tags" in validated_data:
             instance.tags.set(validated_data["tags"])

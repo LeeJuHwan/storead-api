@@ -25,9 +25,9 @@ jobs:
 
       - name: SSH and deploy
         run: |
-            echo ${{ secrets.SSH_PEM_KEY }} >> $HOME/django.pem
-            chmod 400 $HOME/django.pem
-            ssh -i $HOME/django.pem ${{ secrets.SSH_USERNAME}}@${{ secrets.SSH_PUBLIC_IP}} "
+            echo "${{ secrets.SSH_PEM_KEY }}" >> ~/django-key.pem
+            chmod 400 ~/django-key.pem
+            ssh -i ~/django-key.pem ${{ secrets.SSH_USERNAME}}@${{ secrets.SSH_PUBLIC_IP}} "
                 ls -al
                 git pull || exit 1
                 make build || exit 1

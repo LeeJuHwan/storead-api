@@ -1,3 +1,4 @@
+from drf_spectacular.utils import extend_schema
 from rest_framework import generics
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.generics import get_object_or_404
@@ -19,6 +20,23 @@ class CommentListCreateView(generics.ListCreateAPIView):
         article_id = self.kwargs.get("article_id")
         article = get_object_or_404(Article, id=article_id)
         serializer.save(user=user, article=article)
+
+    @extend_schema(
+        summary="댓글 조회 API",
+        tags=["댓글"],
+        responses=CommentSerializer,
+    )
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+    @extend_schema(
+        summary="댓글 생성 API",
+        tags=["댓글"],
+        request=CommentSerializer,
+        responses=CommentSerializer,
+    )
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
 
 
 class CommentUpdateDeleteView(generics.RetrieveUpdateDestroyAPIView):

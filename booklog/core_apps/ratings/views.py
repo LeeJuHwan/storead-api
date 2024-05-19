@@ -1,4 +1,5 @@
 from core_apps.articles.queries import ArticleSelector
+from drf_spectacular.utils import extend_schema
 from rest_framework import status, views
 from rest_framework.response import Response
 
@@ -19,6 +20,12 @@ class RatingAPIView(views.APIView):
     def _validate_user_rating(self, func, *args):
         func(*args)
 
+    @extend_schema(
+        summary="평점 등록 API",
+        tags=["평점"],
+        request=RatingSerializer,
+        responses=RatingSerializer,
+    )
     def post(self, request, *args, **kwargs):
         user = request.user
         article_id = kwargs.get("article_id")
@@ -30,6 +37,12 @@ class RatingAPIView(views.APIView):
         serializer.save(user=user, article=article)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
+    @extend_schema(
+        summary="평점 수정 API",
+        tags=["평점"],
+        request=RatingSerializer,
+        responses=RatingSerializer,
+    )
     def put(self, request, *args, **kwargs):
         user = request.user
         article_id = kwargs.get("article_id")

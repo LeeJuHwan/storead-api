@@ -1,5 +1,7 @@
+from core_apps.common.swaggers import UuidSerializer
 from django.shortcuts import get_object_or_404
-from rest_framework import generics, status
+from drf_spectacular.utils import extend_schema
+from rest_framework import generics, serializers, status
 from rest_framework.exceptions import NotFound
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -29,12 +31,26 @@ class MyProfileDetailAPIView(generics.RetrieveAPIView):
         profile = self.get_queryset().get(user=user)
         return profile
 
+    @extend_schema(
+        summary="나의 프로필 상세 정보 조회 API",
+        tags=["프로필"],
+        responses=ProfileSerializer,
+    )
+    def get(self, request, *args, **kwargs):
+        super().get(request, *args, **kwargs)
+
 
 class UserProfileDetailAPIView(generics.RetrieveAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = ProfileSerializer
     renderer_classes = [ProfileJSONRenderer]
 
+    @extend_schema(
+        summary="다른 유저 프로필 상세 정보 조회 API",
+        tags=["프로필"],
+        request=UuidSerializer,
+        responses=ProfileSerializer,
+    )
     def get(self, request, profile_id):
         profile = get_object_or_404(Profile, id=profile_id)
         serializer = ProfileSerializer(profile)
@@ -50,6 +66,12 @@ class UpdateProfileAPIView(generics.RetrieveAPIView):
         profile = self.request.user.profile
         return profile
 
+    @extend_schema(
+        summary="프로필 수정 API",
+        tags=["프로필"],
+        request=UpdateProfileSerializer,
+        responses={status.HTTP_200_OK: ProfileSerializer},
+    )
     def patch(self, request) -> Response:
         instance: Profile = self.get_object()
         serializer: UpdateProfileSerializer = self.get_serializer(instance, data=request.data, partial=True)
@@ -63,6 +85,16 @@ class UpdateProfileAPIView(generics.RetrieveAPIView):
 
 
 class FollowAPIView(APIView):
+    class FollowSerializer(serializers.Serializer):
+        status_code = serializers.IntegerField()
+        message = serializers.CharField()
+
+    @extend_schema(
+        summary="팔로우 등록 API",
+        tags=["팔로우"],
+        request=UuidSerializer,
+        responses={status.HTTP_200_OK: FollowSerializer},
+    )
     def post(self, request, user_id):
         try:
             follower = Profile.objects.get(user=self.request.user)
@@ -87,6 +119,16 @@ class FollowAPIView(APIView):
 
 
 class UnfollowAPIView(APIView):
+    class FollowSerializer(serializers.Serializer):
+        status_code = serializers.IntegerField()
+        message = serializers.CharField()
+
+    @extend_schema(
+        summary="팔로우 취소 API",
+        tags=["팔로우"],
+        request=UuidSerializer,
+        responses=FollowSerializer,
+    )
     def post(self, request, user_id):
         user_profile = request.user.profile
         profile = Profile.objects.get(user__uuid=user_id)
@@ -95,32 +137,52 @@ class UnfollowAPIView(APIView):
             raise CantUnfollowNotFollowingUser(profile.user.username)
 
         user_profile.unfollow(profile)
-        formatted_response = {
+        context = {
             "status_code": status.HTTP_200_OK,
             "message": f"You have unfollowed {profile.user.username}",
         }
-
-        return Response(formatted_response, status.HTTP_200_OK)
+        return Response(context, status.HTTP_200_OK)
 
 
 class FollowingListView(APIView):
     permission_classes = [IsAuthenticated]
 
+    class FollowListSerializer(serializers.Serializer):
+        status_code = serializers.IntegerField()
+        followers_count = serializers.IntegerField()
+        following = FollowingSerializer(many=True)
+
+    @extend_schema(
+        summary="팔로잉 목록 조회 API",
+        tags=["팔로우"],
+        request=None,
+        responses=FollowListSerializer,
+    )
     def get(self, request):
         profile = get_object_or_404(Profile, user__uuid=request.user.uuid)
         following_profiles = profile.followers.all()
-        serializer = FollowingSerializer(following_profiles, many=True)
-        response = {
+        following_serializer = FollowingSerializer(following_profiles, many=True)
+        response_data = {
             "status_code": status.HTTP_200_OK,
             "followers_count": following_profiles.count(),
-            "following": serializer.data,
+            "following": following_serializer.data,
         }
-        return Response(response, status=status.HTTP_200_OK)
+        return Response(response_data, status=status.HTTP_200_OK)
 
 
 class FollowerListView(APIView):
     permission_classes = [IsAuthenticated]
 
+    class FollowListSerializer(serializers.Serializer):
+        status_code = serializers.IntegerField()
+        followers_count = serializers.IntegerField()
+        followers = FollowingSerializer(many=True)
+
+    @extend_schema(
+        summary="팔로워 목록 조회 API",
+        tags=["팔로우"],
+        responses=FollowListSerializer,
+    )
     def get(self, request):
         profile = get_object_or_404(Profile, user__uuid=request.user.uuid)
         follower_profiles = profile.following.all()

@@ -1,0 +1,27 @@
+name: development debugging server code update
+
+on:
+    push:
+        branches:
+            - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up SSH
+        run: |
+            mkdir -p ~/.ssh/
+            echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+            chmod 600 ~/.ssh/id_rsa
+
+      - name: Set up known hosts
+        run: |
+            echo "${{ secrets.SSH_KNOWN_HOSTS }}" >> ~/.ssh/known_hosts
+            chmod 644 ~/.ssh/known_hosts
+            cd storead-api
+            git pull || exit 1
+            make build || exit 1

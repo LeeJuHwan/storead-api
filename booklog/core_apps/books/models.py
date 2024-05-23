@@ -20,5 +20,18 @@ class Book(TimeStampedModel):
         verbose_name = _("Book")
         verbose_name_plural = _("Books")
 
+        indexes = [
+            models.Index(
+                fields=[
+                    "isbn",
+                ]
+            ),
+            models.Index(
+                fields=[
+                    "title",
+                ]
+            ),
+        ]
+
     def __str__(self):
         return f"{self.title} by {self.author}"

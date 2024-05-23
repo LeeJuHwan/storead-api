@@ -33,28 +33,19 @@ class BookListAPIView(ListCreateAPIView):
         description = serializers.CharField()
         title = serializers.CharField()
         author = serializers.CharField()
-        published_date = serializers.DateField()
+        published_date = serializers.CharField()
         thumbnail_url = serializers.ImageField()
 
     class ResponseSerializer(serializers.Serializer):
         pkid = serializers.IntegerField()
         id = serializers.UUIDField()
-        created_at = serializers.DateField()
+        created_at = serializers.CharField()
         isbn = serializers.CharField()
         title = serializers.CharField()
         author = serializers.CharField()
-        published_date = serializers.DateField()
+        published_date = serializers.CharField()
         description = serializers.CharField()
         thumbnail_url = serializers.ImageField()
-
-    @extend_schema(
-        summary="책 등록 API",
-        tags=["책"],
-        request=RequestSerializer,
-        responses=ResponseSerializer,
-    )
-    def post(self, request, *args, **kwargs):
-        return self.create(request, *args, **kwargs)
 
     @extend_schema(
         summary="책 목록 조회 API",
@@ -63,6 +54,30 @@ class BookListAPIView(ListCreateAPIView):
     )
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
+
+    @extend_schema(
+        summary="책 등록 API",
+        tags=["책"],
+        request=RequestSerializer,
+        responses=ResponseSerializer,
+    )
+    def post(self, request, *args, **kwargs):
+        isbn = request.data.get("isbn")
+        if isbn:
+            try:
+                book = Book.objects.get(isbn=isbn)
+            except Book.DoesNotExist:
+                book = None
+
+        if book is None:
+            serializer = self.RequestSerializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            book, created = Book.objects.get_or_create(isbn=isbn)
+            status_code = status.HTTP_201_CREATED if created else status.HTTP_200_OK
+
+        serializer = self.ResponseSerializer(book)
+        status_code = status.HTTP_200_OK
+        return Response(serializer.data, status=status_code)
 
 
 class BookDetailAPIView(APIView):

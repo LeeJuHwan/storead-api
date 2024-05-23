@@ -123,7 +123,7 @@ class SocialLogutAPI(APIView, SocialOAuthService):
 
     @extend_schema(
         summary="소셜 로그아웃 API",
-        tags=["로그인"],
+        tags=["로그아웃"],
         responses=OutputSerializer,
     )
     def post(self, request: Request) -> Response:

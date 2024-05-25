@@ -7,6 +7,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework_simplejwt.views import TokenVerifyView
 
 from .exceptions import IncorrectSocialType
 from .models import SocialUser
@@ -130,11 +131,20 @@ class SocialLogutAPI(APIView, SocialOAuthService):
         return self.social_logout()
 
 
+class TokenVerifyAPIView(TokenVerifyView):
+    @extend_schema(
+        summary="토큰 검증 API",
+        tags=["토큰"],
+    )
+    def post(self, request: Request, *args, **kwargs) -> Response:
+        return super().post(request, *args, **kwargs)
+
+
 class TokenRefreshAPIView(APIView):
     permission_classes = (AllowAny,)
 
     @extend_schema(
-        summary="토큰 갱신 API",
+        summary="토큰 재발급 API",
         tags=["토큰"],
         responses=OutputSerializer,
     )

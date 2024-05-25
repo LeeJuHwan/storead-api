@@ -17,12 +17,22 @@ User = get_user_model()
 class ArticleListCreateView(generics.ListCreateAPIView):
     queryset = Article.objects.all()
     serializer_class = ArticleSerializer
-    permission_classes = [permissions.IsAuthenticated]
     pagination_class = CommonCursorPagination
     ordering_fields = [
         "created_at",
         "updated_at",
     ]
+
+    def get_permissions(self):
+        permission_options = {
+            "GET": [permissions.AllowAny],
+            "POST": [permissions.IsAuthenticated],
+        }
+        http_method = permission_options.get(self.request.method)
+
+        if not http_method:
+            return [permissions.IsAuthenticated]
+        return http_method
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)

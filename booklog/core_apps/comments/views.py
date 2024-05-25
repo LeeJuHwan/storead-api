@@ -1,3 +1,4 @@
+from core_apps.common.swaggers import UuidSerializer
 from drf_spectacular.utils import extend_schema
 from rest_framework import generics
 from rest_framework.exceptions import PermissionDenied
@@ -22,7 +23,7 @@ class CommentListCreateView(generics.ListCreateAPIView):
         serializer.save(user=user, article=article)
 
     @extend_schema(
-        summary="댓글 조회 API",
+        summary="댓글 목록 조회 API",
         tags=["댓글"],
         responses=CommentSerializer,
     )
@@ -59,3 +60,29 @@ class CommentUpdateDeleteView(generics.RetrieveUpdateDestroyAPIView):
         if user != comment.user:
             raise PermissionDenied("You do not have permission to delete this comment.")
         instance.delete()
+
+    @extend_schema(
+        summary="댓글 상세 조회 API",
+        tags=["댓글"],
+        request=UuidSerializer,
+        responses=CommentSerializer,
+    )
+    def get(self, request, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs)
+
+    @extend_schema(
+        summary="댓글 내용 수정 API",
+        tags=["댓글"],
+        request=CommentSerializer,
+        responses=CommentSerializer,
+    )
+    def patch(self, request, *args, **kwargs):
+        return self.partial_update(request, *args, **kwargs)
+
+    @extend_schema(
+        summary="댓글 내용 삭제 API",
+        tags=["댓글"],
+        request=UuidSerializer,
+    )
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)

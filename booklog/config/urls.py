@@ -2,7 +2,7 @@ from django.conf import settings
 from django.contrib import admin
 from django.urls import include, path
 
-from config.settings.dev import swagger_urls
+from .swagger import swagger_urls
 
 urlpatterns = [
     path(f"{settings.ADMIN_URL}", admin.site.urls),
@@ -14,7 +14,8 @@ urlpatterns = [
     path("api/v1/ratings", include("core_apps.ratings.urls")),
 ]
 
-urlpatterns.extend(swagger_urls())
+if settings.DEBUG:
+    urlpatterns.extend(swagger_urls())
 
 admin.site.site_header = "Storead API Admin"
 admin.site.site_title = "Storead API Admin Portal"

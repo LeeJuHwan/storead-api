@@ -1,11 +1,11 @@
-from core_apps.common.paginations import CommonCursorPagination
-from core_apps.common.swaggers import OutputSerializer, UuidSerializer
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
 from drf_spectacular.utils import extend_schema
 from rest_framework import generics, permissions, status
 from rest_framework.response import Response
 
+from ..common.paginations import CommonCursorPagination
+from ..common.swaggers import OutputSerializer, UuidSerializer
 from .exceptions import DuplicateRecommendArticle
 from .models import Article, ArticleView, Recommend
 from .permissions import IsOwnerOrReadOnly
@@ -18,6 +18,7 @@ class ArticleListCreateView(generics.ListCreateAPIView):
     queryset = Article.objects.all()
     serializer_class = ArticleSerializer
     pagination_class = CommonCursorPagination
+    permission_classes = [permissions.IsAuthenticated]
     ordering_fields = [
         "created_at",
         "updated_at",
@@ -25,14 +26,14 @@ class ArticleListCreateView(generics.ListCreateAPIView):
 
     def get_permissions(self):
         permission_options = {
-            "GET": [permissions.AllowAny],
+            "GET": [permissions.AllowAny()],
             "POST": [permissions.IsAuthenticated],
         }
-        http_method = permission_options.get(self.request.method)
+        permission = permission_options.get(self.request.method)
 
-        if not http_method:
+        if not permission:
             return [permissions.IsAuthenticated]
-        return http_method
+        return permission
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)

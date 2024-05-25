@@ -26,6 +26,7 @@ class BookListAPIView(ListCreateAPIView):
     permission_classes = [AllowAny]
     pagination_class = CommonCursorPagination
     queryset = Book.objects.all()
+    selector = BookSelector()
     ordering_fields = ["created_at"]
 
     class RequestSerializer(serializers.Serializer):
@@ -63,25 +64,23 @@ class BookListAPIView(ListCreateAPIView):
     )
     def post(self, request, *args, **kwargs):
         isbn = request.data.get("isbn")
+        created = False
+
         if isbn:
-            try:
-                book = Book.objects.get(isbn=isbn)
-            except Book.DoesNotExist:
-                book = None
+            book = self.selector.get_book_by_isbn(isbn)
 
         if book is None:
             serializer = self.RequestSerializer(data=request.data)
             serializer.is_valid(raise_exception=True)
             book, created = Book.objects.get_or_create(isbn=isbn)
-            status_code = status.HTTP_201_CREATED if created else status.HTTP_200_OK
 
         serializer = self.ResponseSerializer(book)
-        status_code = status.HTTP_200_OK
+        status_code = status.HTTP_201_CREATED if created else status.HTTP_200_OK
+
         return Response(serializer.data, status=status_code)
 
 
 class BookDetailAPIView(APIView):
-    serializer_class = BookListSerializer
     permission_classes = [IsAuthenticated]
     queryset = Book.objects.all()
     selector = BookSelector()
@@ -91,7 +90,7 @@ class BookDetailAPIView(APIView):
         isbn = serializers.CharField()
         title = serializers.CharField()
         author = serializers.CharField()
-        published_date = serializers.DateField()
+        published_date = serializers.CharField()
         description = serializers.CharField()
         thumbnail_url = serializers.ImageField()
 

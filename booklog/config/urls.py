@@ -14,8 +14,7 @@ urlpatterns = [
     path("api/v1/ratings", include("core_apps.ratings.urls")),
 ]
 
-if settings.DEBUG:
-    urlpatterns.extend(swagger_urls())
+urlpatterns.extend(swagger_urls())
 
 admin.site.site_header = "Storead API Admin"
 admin.site.site_title = "Storead API Admin Portal"

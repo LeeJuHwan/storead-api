@@ -5,18 +5,35 @@ services:
     build:
       context: .
       dockerfile: docker/dev/django/Dockerfile
-    command: "python3 booklog/manage.py runserver 0:8000 --settings=config.settings.dev"
+    command: /start
     volumes:
       - .:/app
       - static_volume:/app/staticfiles
       - media_volume:/app/mediafiles
     ports:
       - '8000:8000'
+    environment:
+      - DJANGO_SETTINGS_MODULE=config.settings.dev
     env_file:
       - ./.envs/.dev/.django
     restart: unless-stopped
     networks:
       - api-server
+
+  nginx:
+    restart: always
+    depends_on:
+        - api
+    volumes:
+        - static_volume:/app/staticfiles
+        - media_volume:/app/mediafiles
+    build:
+        context: ./docker/dev/nginx
+        dockerfile: Dockerfile
+    ports:
+        - "8080:80"
+    networks:
+        - api-server
 
 networks:
     api-server:

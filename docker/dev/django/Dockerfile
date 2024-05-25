@@ -12,7 +12,7 @@ RUN apt-get update \
     build-essential libpq-dev
 
 RUN echo "==> Copying poetry files..."
-COPY poetry.lock pyproject.toml /app
+COPY poetry.lock pyproject.toml /app/
 
 RUN echo "==> Installing dependencies..."
 RUN pip3 install poetry
@@ -22,9 +22,15 @@ RUN poetry install
 RUN echo "==> Copying entrypoint script..."
 COPY ./docker/dev/django/entrypoint /entrypoint
 
-RUN echo "==> Making entrypoint script executable..."
+RUN echo "==> Making start script executable..."
 RUN chmod +x /entrypoint
+
+RUN echo "==> Copying entrypoint script..."
+COPY ./docker/dev/django/start /start
+
+RUN echo "==> Making start script executable..."
+RUN chmod +x /start
 
 COPY . /app/
 
-ENTRYPOINT [ "/entrypoint" ]
+#ENTRYPOINT [ "/entrypoint" ]

@@ -1,20 +1,11 @@
 from datetime import timedelta
-from pathlib import Path
 
-import environ
-from utils.common.load_yaml import load_yaml_file
+from .. import env
 
-env = environ.Env()
+SECRET_KEY = env.ENV("SIGNING_KEY", default="0_w4ttc_r+95i0c^4v2ea7ppol817er--ef!&&s2c41r&g3cdy")
 
-SECRET_KEY = env("SIGNING_KEY", default="0_w4ttc_r+95i0c^4v2ea7ppol817er--ef!&&s2c41r&g3cdy")
-
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
-ROOT_DIR = Path(__file__).resolve().parent.parent.parent
-APP_DIR = ROOT_DIR / "core_apps"
-super_secret_yaml = Path(ROOT_DIR, "config", "settings", ".social.yaml")
-
-SOCIAL_PLATFORM = load_yaml_file(super_secret_yaml).get("social")
-PLATFORM_URL = load_yaml_file(super_secret_yaml).get("platform_url")
+SOCIAL_PLATFORM = env.load_yaml_file(env.super_secret_yaml).get("social")
+PLATFORM_URL = env.load_yaml_file(env.super_secret_yaml).get("platform_url")
 
 # Application definition
 DJANGO_APPS = [
@@ -88,7 +79,7 @@ WSGI_APPLICATION = "config.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
-        "NAME": ROOT_DIR / "db.sqlite3",
+        "NAME": env.ROOT_DIR / "db.sqlite3",
     }
 }
 
@@ -167,12 +158,15 @@ APPEND_SLASH = False
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 STATIC_URL = "/staticfiles/"
-STATIC_ROOT = str(ROOT_DIR.parent / "staticfiles")
+STATIC_ROOT = str(env.ROOT_DIR.parent / "staticfiles")
 
 MEDIA_URL = "/mediafiles/"
-MEDIA_ROOT = str(ROOT_DIR.parent / "mediafiles")
+MEDIA_ROOT = str(env.ROOT_DIR.parent / "mediafiles")
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+
+from ..swagger import *  # noqa

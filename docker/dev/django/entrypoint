@@ -1,8 +1,10 @@
 #!/bin/sh
 
 set +e
-echo "==> Django setup, executing: makemigrations "
-python3 booklog/manage.py makemigrations
+# echo "==> Django setup, executing: makemigrations "
+# python3 booklog/manage.py makemigrations
 echo "==> Django setup, executing: migrate pro"
-python3 booklog/manage.py migrate
+python3 booklog/manage.py migrate --no-input
+echo "==> collections setup, executing: collectstatic"
+python booklog/manage.py collectstatic --no-input
 exec "$@"

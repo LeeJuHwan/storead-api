@@ -1,0 +1,16 @@
+#!/bin/bash
+
+# error to exit process
+set -o errexit
+
+# pipeline ar executed successfully
+set -o pipefail
+
+# sciprt to exit unitialized variable is usesd
+set -o nounset
+
+echo "==> Django setup, executing: migrate pro"
+python3 booklog/manage.py migrate --no-input
+echo "==> collections setup, executing: collectstatic"
+python booklog/manage.py collectstatic --no-input
+exec python booklog/manage.py runserver 0.0.0.0:8000

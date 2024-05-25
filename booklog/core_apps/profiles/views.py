@@ -57,10 +57,14 @@ class UserProfileDetailAPIView(generics.RetrieveAPIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-class UpdateProfileAPIView(generics.RetrieveAPIView):
+class UpdateProfileAPIView(generics.UpdateAPIView):
     serializer_class = UpdateProfileSerializer
     permission_classes = [IsAuthenticated]
     renderer_classes = [ProfileJSONRenderer]
+
+    class ProfileRenderResponse(serializers.Serializer):
+        status_code = serializers.IntegerField()
+        profile = ProfileSerializer()
 
     def get_object(self) -> Profile:
         profile = self.request.user.profile
@@ -70,7 +74,7 @@ class UpdateProfileAPIView(generics.RetrieveAPIView):
         summary="프로필 수정 API",
         tags=["프로필"],
         request=UpdateProfileSerializer,
-        responses={status.HTTP_200_OK: ProfileSerializer},
+        responses={status.HTTP_200_OK: ProfileRenderResponse},
     )
     def patch(self, request) -> Response:
         instance: Profile = self.get_object()

@@ -1,8 +1,9 @@
-from core_apps.articles.models import Article
-from core_apps.common.models import TimeStampedModel
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+
+from ..articles.models import Article
+from ..common.models import TimeStampedModel
 
 User = get_user_model()
 

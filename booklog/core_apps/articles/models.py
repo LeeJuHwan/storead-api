@@ -1,11 +1,11 @@
 from autoslug import AutoSlugField
-from core_apps.books.models import Book
-from core_apps.common.models import TimeStampedModel
-from core_apps.social_users.models import SocialUser
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from taggit.managers import TaggableManager
 
+from ..books.models import Book
+from ..common.models import TimeStampedModel
+from ..social_users.models import SocialUser
 from .read_time_engine import ArticleReadTimeEngine
 
 

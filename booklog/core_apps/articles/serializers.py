@@ -1,10 +1,11 @@
-from core_apps.articles.models import Article, ArticleView, Recommend
-from core_apps.books.excpetions import BookNotFound
-from core_apps.books.models import Book
-from core_apps.books.serializers import BookListSerializer
-from core_apps.comments.serializers import CommentSerializer
-from core_apps.profiles.serializers import ProfileSerializer
 from rest_framework import serializers
+
+from ..articles.models import Article, ArticleView, Recommend
+from ..books.excpetions import BookNotFound
+from ..books.models import Book
+from ..books.serializers import BookListSerializer
+from ..comments.serializers import CommentSerializer
+from ..profiles.serializers import ProfileSerializer
 
 
 class TagListField(serializers.Field):

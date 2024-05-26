@@ -1,6 +1,5 @@
 from typing import Dict
 
-from core_apps.common.swaggers import OutputSerializer
 from drf_spectacular.utils import OpenApiParameter, extend_schema
 from rest_framework import status
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -9,6 +8,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.views import TokenVerifyView
 
+from ..common.swaggers import OutputSerializer
 from .exceptions import IncorrectSocialType
 from .models import SocialUser
 from .services import SocialOAuthService

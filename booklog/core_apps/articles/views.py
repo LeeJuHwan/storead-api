@@ -1,12 +1,14 @@
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
+from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import extend_schema
-from rest_framework import generics, permissions, status
+from rest_framework import filters, generics, permissions, serializers, status
 from rest_framework.response import Response
 
 from ..common.paginations import CommonCursorPagination
 from ..common.swaggers import OutputSerializer, UuidSerializer
 from .exceptions import DuplicateRecommendArticle
+from .filters import ArticleFilter
 from .models import Article, ArticleView, Recommend
 from .permissions import IsOwnerOrReadOnly
 from .serializers import ArticleSerializer, RecommendSerializer
@@ -19,20 +21,37 @@ class ArticleListCreateView(generics.ListCreateAPIView):
     serializer_class = ArticleSerializer
     pagination_class = CommonCursorPagination
     permission_classes = [permissions.IsAuthenticated]
+    filter_backends = (DjangoFilterBackend, filters.OrderingFilter)
+    filterset_class = ArticleFilter
     ordering_fields = [
         "created_at",
         "updated_at",
     ]
 
+    class RequestArticleList(serializers.Serializer):
+        """
+         "title": "title",
+         "tags": ["tags1", "tags2"],
+         "description": "description",
+         "body": "body context",
+        "book": "026ae117-2e41-4658-9fde-850f1462bee5"
+        """
+
+        title = serializers.CharField()
+        tags = serializers.ListField(child=serializers.CharField())
+        description = serializers.CharField()
+        body = serializers.CharField()
+        book = serializers.UUIDField()
+
     def get_permissions(self):
         permission_options = {
             "GET": [permissions.AllowAny()],
-            "POST": [permissions.IsAuthenticated],
+            "POST": [permissions.IsAuthenticated()],
         }
         permission = permission_options.get(self.request.method)
 
         if not permission:
-            return [permissions.IsAuthenticated]
+            return [permissions.IsAuthenticated()]
         return permission
 
     def perform_create(self, serializer):
@@ -49,6 +68,7 @@ class ArticleListCreateView(generics.ListCreateAPIView):
     @extend_schema(
         summary="게시글 생성 API",
         tags=["게시글"],
+        request=RequestArticleList,
         responses=ArticleSerializer(many=True),
     )
     def post(self, request, *args, **kwargs):

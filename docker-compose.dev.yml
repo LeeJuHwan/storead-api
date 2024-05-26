@@ -1,11 +1,26 @@
 version: '3.9'
 
 services:
+  es:
+    image: elasticsearch:7.17.9
+    environment:
+      - discovery.type=single-node
+    command: >
+      /bin/bash -c "
+        bin/elasticsearch-plugin install analysis-nori &&
+        elasticsearch -Elogger.level=WARN"
+    ports:
+      - "9200:9200"
+    networks:
+      - api-server
+
   api: &api
     build:
       context: .
       dockerfile: docker/dev/django/Dockerfile
     command: /start
+    depends_on:
+      - es
     volumes:
       - .:/app
       - static_volume:/app/staticfiles

@@ -25,6 +25,9 @@ THIRD_PARTY_APPS = [
     "dj_rest_auth",
     "taggit",
     "drf_spectacular",
+    "django_filters",
+    "django_elasticsearch_dsl",
+    "django_elasticsearch_dsl_drf",
 ]
 
 
@@ -35,6 +38,7 @@ LOCAL_APPS = [
     "core_apps.profiles",
     "core_apps.comments",
     "core_apps.ratings",
+    "core_apps.search",
 ]
 
 
@@ -170,3 +174,4 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 
 from ..swagger import *  # noqa
+from ..elastic_search import *  # noqa

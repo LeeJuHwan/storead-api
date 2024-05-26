@@ -29,3 +29,6 @@ migrate:
 
 dbshell:
 	docker compose -f docker-compose.$(ENV).yml run --rm api python booklog/manage.py dbshell
+
+es-rebuild:
+	docker compose -f docker-compose.$(ENV).yml run --rm api python booklog/manage.py search_index --rebuild

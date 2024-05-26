@@ -11,6 +11,7 @@ class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
         fields = [
+            "pkid",
             "id",
             "username",
             "article_title",
@@ -19,14 +20,6 @@ class CommentSerializer(serializers.ModelSerializer):
             "created_at",
             "replies",
         ]
-
-    def create(self, validated_data):
-        print(f"validated_data: {validated_data}")
-        parent_comment_id = validated_data.get("parent_comment")
-        if parent_comment_id:
-            parent_comment = Comment.objects.get(id=parent_comment_id)
-            validated_data["parent_comment"] = parent_comment
-        return super().create(validated_data)
 
     def get_replies(self, instance):
         serializer = self.__class__(instance.replies, many=True)

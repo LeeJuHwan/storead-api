@@ -53,20 +53,22 @@ class ArticleSerializer(serializers.ModelSerializer):
         return obj.author_rating()
 
     def create(self, validated_data):
-        print(f"create validate data: {validated_data}")
         tags = validated_data.pop("tags")
-        article = Article.objects.create(**validated_data)
-        article.tags.set(tags)
 
-        # TODO: select query 분리
         if book_uuid := self.context["request"].data.get("book"):
             try:
                 book = Book.objects.get(id=book_uuid)
-                article.book = book
-                article.save()
             except Book.DoesNotExist:
                 raise BookNotFound
 
+        if book:
+            validated_data["book"] = book
+
+        article = Article.objects.create(**validated_data)
+        article.tags.set(tags)
+
+        article.book = book
+        article.save()
         return article
 
     def update(self, instance, validated_data):
@@ -76,7 +78,6 @@ class ArticleSerializer(serializers.ModelSerializer):
         instance.body = validated_data.get("body", instance.body)
         instance.updated_at = validated_data.get("updated_at", instance.updated_at)
 
-        # TODO: select query 분리
         if book_uuid := self.context["request"].data.get("book"):
             try:
                 book = Book.objects.get(id=book_uuid)

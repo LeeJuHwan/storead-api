@@ -3,9 +3,8 @@
 """
 
 import uuid
+from typing import Optional
 
-from core_apps.common.paginations import CommonCursorPagination
-from core_apps.common.swaggers import UuidSerializer
 from drf_spectacular.utils import extend_schema
 from rest_framework import serializers, status
 from rest_framework.exceptions import NotFound
@@ -15,6 +14,8 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from ..common.paginations import CommonCursorPagination
+from ..common.swaggers import UuidSerializer
 from .models import Book
 from .queries import BookSelector
 from .serializers import BookListSerializer
@@ -35,7 +36,7 @@ class BookListAPIView(ListCreateAPIView):
         title = serializers.CharField()
         author = serializers.CharField()
         published_date = serializers.CharField()
-        thumbnail_url = serializers.ImageField()
+        thumbnail_url = serializers.ImageField(required=False)
 
     class ResponseSerializer(serializers.Serializer):
         pkid = serializers.IntegerField()
@@ -63,21 +64,22 @@ class BookListAPIView(ListCreateAPIView):
         responses=ResponseSerializer,
     )
     def post(self, request, *args, **kwargs):
-        isbn = request.data.get("isbn")
+        isbn: str = request.data.get("isbn")
         created = False
 
         if isbn:
-            book = self.selector.get_book_by_isbn(isbn)
+            book: Optional[Book] = self.selector.get_book_by_isbn(isbn)
 
         if book is None:
-            serializer = self.RequestSerializer(data=request.data)
-            serializer.is_valid(raise_exception=True)
-            book, created = Book.objects.get_or_create(isbn=isbn)
+            request = self.RequestSerializer(data=request.data)
+            request.is_valid(raise_exception=True)
+            book = Book.objects.create(**request.validated_data)
+            created = True
 
-        serializer = self.ResponseSerializer(book)
+        response = self.ResponseSerializer(book)
         status_code = status.HTTP_201_CREATED if created else status.HTTP_200_OK
 
-        return Response(serializer.data, status=status_code)
+        return Response(response.data, status=status_code)
 
 
 class BookDetailAPIView(APIView):

@@ -1,5 +1,5 @@
-from autoslug import AutoSlugField
 from django.db import models
+from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 from taggit.managers import TaggableManager
 
@@ -46,7 +46,7 @@ class Article(TimeStampedModel):
     author = models.ForeignKey(SocialUser, on_delete=models.CASCADE, related_name="articles")
     book = models.ForeignKey(Book, on_delete=models.SET_NULL, related_name="books", null=True)
     title = models.CharField(verbose_name=_("Title"), max_length=255)
-    slug = AutoSlugField(populate_from="title", always_update=True, unique=True)
+    slug = models.SlugField(unique=True, allow_unicode=True)
     description = models.CharField(verbose_name=_("description"), max_length=255)
     body = models.TextField(verbose_name=_("article content"))
 
@@ -60,6 +60,10 @@ class Article(TimeStampedModel):
 
     def __str__(self):
         return f"{self.author.username}'s {self.title}"
+
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.title, allow_unicode=True)
+        super().save(*args, **kwargs)
 
     @property
     def estimated_reading_time(self) -> str:

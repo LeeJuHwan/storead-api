@@ -1,5 +1,8 @@
 ENV ?= dev
 
+restart:
+	docker compose -f docker-compose.$(ENV).yml restart
+
 build:
 	docker compose -f docker-compose.$(ENV).yml up --build -d --remove-orphans
 

@@ -45,7 +45,7 @@ services:
         context: ./docker/dev/nginx
         dockerfile: Dockerfile
     ports:
-        - "8080:80"
+        - "80:80"
     networks:
         - api-server
 

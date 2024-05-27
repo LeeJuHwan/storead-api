@@ -1,5 +1,4 @@
-from core_apps.common.base.selectors import BaseSelector
-
+from ..common.base.selectors import BaseSelector
 from .exceptions import ArticleIdNotFound
 from .models import Article
 from .validators import ArticleValidator

@@ -12,7 +12,14 @@ nori_analyzer = analyzer(
 
 @registry.register_document  # NOTE: Elasticsearch index
 class ArticleDocument(Document):
-    title = fields.TextField(attr="title", analyzer=nori_analyzer)
+    title = fields.TextField(
+        attr="title",
+        analyzer=nori_analyzer,
+        fields={
+            "raw": fields.TextField(),
+            "suggest": fields.Completion(),  # NOTE: search to auto complete
+        },
+    )
     description = fields.TextField(attr="description", analyzer=nori_analyzer)
     body = fields.TextField(attr="body", analyzer=nori_analyzer)
     author_username = fields.TextField()

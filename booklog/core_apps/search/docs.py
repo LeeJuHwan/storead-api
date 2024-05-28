@@ -45,3 +45,51 @@ ordering_parameter = OpenApiParameter(
         ),
     ],
 )
+
+
+suggest_parameter = OpenApiParameter(
+    name="title__completion",
+    description="자동 완성 검색 내용",
+    type=OpenApiTypes.STR,
+    location=OpenApiParameter.QUERY,
+    examples=[
+        OpenApiExample(name="검색 제목", value="검색 할 내용", description="suggest?title__completion={value} 형태")
+    ],
+)
+
+
+auto_suggest_response = OpenApiExample(
+    name="자동 완성 결과",
+    response_only=True,
+    value={
+        "title__completion": [
+            {
+                "text": "검색한 텍스트",
+                "offset": 0,
+                "length": "텍스트 길이",
+                "options": [
+                    {
+                        "text": "게시글 제목",
+                        "_index": "ElasticSearch Engine Index 이름",
+                        "_type": "인덱스 타입",
+                        "_id": "인덱스 번호",
+                        "_score": "자동 완성 적합 스코어",
+                        "_source": {
+                            "title": "책 제목",
+                            "description": "책 내용 미리보기",
+                            "body": "책 내용",
+                            "author_username": "게시글 작성자",
+                            "tags": [
+                                "게시글 태그 목록1",
+                                "게시글 태그 목록2",
+                            ],
+                            "book_title": "책 제목",
+                            "created_at": "게시글 작성 일자",
+                        },
+                    }
+                ],
+            }
+        ]
+    },
+    status_codes=[200],
+)

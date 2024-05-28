@@ -12,7 +12,7 @@ urlpatterns = [
     path("api/v1/profiles", include("core_apps.profiles.urls")),
     path("api/v1/comments", include("core_apps.comments.urls")),
     path("api/v1/ratings", include("core_apps.ratings.urls")),
-    path("api/v1/elastic", include("core_apps.search.urls")),
+    path("api/v1/search", include("core_apps.search.urls")),
 ]
 
 urlpatterns.extend(swagger_urls())

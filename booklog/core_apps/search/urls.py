@@ -1,11 +1,8 @@
-from django.urls import path
+from rest_framework import routers
 
 from .views import ArticleElasticSearchView
 
-urlpatterns = [
-    path(
-        "/search",
-        ArticleElasticSearchView.as_view({"get": "list"}),
-        name="article_search",
-    )
-]
+router = routers.DefaultRouter(trailing_slash=False)
+router.register("/articles", ArticleElasticSearchView, basename="articles")
+
+urlpatterns = router.urls

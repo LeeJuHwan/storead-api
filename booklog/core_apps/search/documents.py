@@ -1,12 +1,22 @@
 from django_elasticsearch_dsl import Document, fields
 from django_elasticsearch_dsl.registries import registry
 from elasticsearch_dsl import analyzer
+from elasticsearch_dsl.analysis import token_filter
 
 from ..articles.models import Article
 
 nori_analyzer = analyzer(
     "nori_tokenizer",
     tokenizer="nori_tokenizer",
+)
+
+custom_edge_ngram_completion = analyzer(
+    "edge_ngram_completion",
+    tokenizer=nori_analyzer,
+    filter=[
+        token_filter("edge_ngram_filter_front", type="edge_ngram", min=1, max_gram=10, side="front"),
+        token_filter("edge_ngram_filter_back", type="edge_ngram", min=1, max_gram=10, side="back"),
+    ],
 )
 
 
@@ -18,6 +28,9 @@ class ArticleDocument(Document):
         fields={
             "raw": fields.TextField(),
             "suggest": fields.Completion(),  # NOTE: search to auto complete
+            "edge_ngram_completion": fields.TextField(
+                analyzer=custom_edge_ngram_completion,
+            ),
         },
     )
     description = fields.TextField(attr="description", analyzer=nori_analyzer)

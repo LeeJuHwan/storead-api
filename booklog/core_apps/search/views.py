@@ -1,10 +1,16 @@
-from django_elasticsearch_dsl_drf.constants import SUGGESTER_COMPLETION
-from django_elasticsearch_dsl_drf.filter_backends import (
+from django_elasticsearch_dsl_drf.constants import (
+    FUNCTIONAL_SUGGESTER_COMPLETION_MATCH,
+    FUNCTIONAL_SUGGESTER_COMPLETION_PREFIX,
+    SUGGESTER_COMPLETION,
+    SUGGESTER_TERM,
+)
+from django_elasticsearch_dsl_drf.filter_backends import (  # SearchFilterBackend,
+    CompoundSearchFilterBackend,
     DefaultOrderingFilterBackend,
     FilteringFilterBackend,
+    FunctionalSuggesterFilterBackend,
     IdsFilterBackend,
     OrderingFilterBackend,
-    SearchFilterBackend,
     SuggesterFilterBackend,
 )
 from django_elasticsearch_dsl_drf.viewsets import DocumentViewSet
@@ -35,7 +41,9 @@ class ArticleElasticSearchView(DocumentViewSet):
         IdsFilterBackend,
         OrderingFilterBackend,
         DefaultOrderingFilterBackend,
-        SearchFilterBackend,
+        # SearchFilterBackend,
+        CompoundSearchFilterBackend,
+        FunctionalSuggesterFilterBackend,
     ]
 
     suggester_fields = {
@@ -43,12 +51,39 @@ class ArticleElasticSearchView(DocumentViewSet):
             "field": "title.suggest",
             "suggesters": [
                 SUGGESTER_COMPLETION,
+                SUGGESTER_TERM,
             ],
+            "options": {
+                "fuzzy": {
+                    "fuzziness": 1,
+                }
+            },
+        },
+    }
+
+    # Functional suggester fields
+    functional_suggester_fields = {
+        "title": {
+            "field": "title.suggest",
+            "suggesters": [
+                FUNCTIONAL_SUGGESTER_COMPLETION_PREFIX,
+            ],
+            "default_suggester": FUNCTIONAL_SUGGESTER_COMPLETION_PREFIX,
+            "options": {
+                "size": 25,
+                "from": 0,
+            },
+        },
+        "title_suggest_match": {
+            "field": "title.edge_ngram_completion",
+            "suggesters": [FUNCTIONAL_SUGGESTER_COMPLETION_MATCH],
+            "default_suggester": FUNCTIONAL_SUGGESTER_COMPLETION_MATCH,
         },
     }
 
     search_fields = (
         "title",
+        "title.edge_ngram_completion",
         "book_title",
         "description",
         "body",

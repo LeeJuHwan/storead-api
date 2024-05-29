@@ -6,4 +6,4 @@ class ArticlesConfig(AppConfig):
     name = "core_apps.articles"
 
     def ready(self):
-        pass
+        from ..search import signals  # noqa

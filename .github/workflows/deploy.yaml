@@ -31,6 +31,7 @@ jobs:
                 cd storead-api
                 ls -al
                 ${{ secrets.PRODUCTION_ENV }} > ./.envs/.prd/.django
+                ${{ secrets.PRODUCTION_DB }} > ./.envs/.prd/.database
                 git pull || exit 1
                 sudo make build || exit 1
             "

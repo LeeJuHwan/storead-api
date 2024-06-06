@@ -1,4 +1,4 @@
-RUNFILE ?= docker-compose.yml
+RUNFILE ?= docker-compose.dev.yml
 
 restart:
 	docker compose -f $(RUNFILE) restart

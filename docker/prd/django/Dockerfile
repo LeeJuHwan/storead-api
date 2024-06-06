@@ -8,8 +8,8 @@ ENV PYTHONUNBUFFERED 1
 
 RUN echo "==> Updating ubuntu apt packages..."
 RUN apt-get update \
-    && apt-get install -y gcc python3-dev musl-dev libmagic1 libffi-dev netcat-traditional sqlite3 \
-    build-essential libpq-dev
+    && apt-get install -y gcc python3-dev musl-dev libmagic1 libffi-dev netcat-traditional \
+    pkg-config default-libmysqlclient-dev build-essential libpq-dev
 
 RUN echo "==> Copying poetry files..."
 COPY poetry.lock pyproject.toml /app/

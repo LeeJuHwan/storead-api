@@ -1,4 +1,4 @@
-name: development debugging server code update
+name: Deploy on aws my application
 
 on:
     push:
@@ -30,6 +30,7 @@ jobs:
             ssh -i ~/django-key.pem ${{ secrets.SSH_USERNAME}}@${{ secrets.SSH_PUBLIC_IP}} "
                 ls -al
                 cd storead-api
+                ${{ secrets.PRODUCTION_ENV }} >> .envs/.prd/.django
                 git pull || exit 1
                 make build || exit 1
             "

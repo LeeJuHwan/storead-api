@@ -174,5 +174,6 @@ MEDIA_ROOT = str(env.ROOT_DIR.parent / "mediafiles")
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 from ..logging import *  # noqa
+from ..sentry import *  # noqa
 from ..swagger import *  # noqa
 from ..elastic_search import *  # noqa

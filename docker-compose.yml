@@ -13,6 +13,16 @@ services:
     networks:
       - api-server
 
+  mysql:
+    image: mysql:latest
+    env_file:
+      - ./.envs/.prd/.database
+    volumes:
+      - mysql-data:/data/mysql/
+    ports:
+      - "3306:3306"
+    restart: always
+
   api:
     build:
       context: .
@@ -68,3 +78,4 @@ volumes:
     static_volume:
     media_volume:
     es-data:
+    mysql-data:

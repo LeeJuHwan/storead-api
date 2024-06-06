@@ -5,12 +5,13 @@ from django.utils.deprecation import MiddlewareMixin
 from django.db import connection
 from django.conf import settings
 
+
 log = logging.getLogger("django")
 
 
 class RequestLoggingMiddleware(MiddlewareMixin):
     def process_request(self, request):
-        self.start_time = time.time()
+        self.start_time = time.time()  # noqa
         log.info(f"Request: {request.get_full_path()} request {request.META.get('REMOTE_ADDR')}")
 
     def process_response(self, request, response):

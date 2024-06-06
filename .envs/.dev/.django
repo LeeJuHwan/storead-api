@@ -2,3 +2,4 @@ SIGNING_KEY=0_w4ttc_r+95i0c^4v2ea7ppol817er--ef!&&s2c41r&g3cdy
 DOMAIN=localhost:8000
 DJANGO_DEBUG=True
 DJANGO_ENV=dev
+LOG_DIR=./logs

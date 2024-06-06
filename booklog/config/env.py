@@ -9,6 +9,7 @@ ENV = environ.Env()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 ROOT_DIR = Path(__file__).resolve().parent.parent
 APP_DIR = ROOT_DIR / "core_apps"
+LOG_DIR = ENV.str("LOG_DIR", default="./logs")
 super_secret_yaml = Path(ROOT_DIR, "config", "settings", ".social.yaml")
 
 

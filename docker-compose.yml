@@ -22,6 +22,8 @@ services:
     ports:
       - "3306:3306"
     restart: always
+    networks:
+      - authors-api
 
   api:
     build:
@@ -40,6 +42,7 @@ services:
       - DJANGO_SETTINGS_MODULE=config.settings.prd
     env_file:
       - ./.envs/.prd/.django
+      - ./.envs/.prd/.database
     restart: unless-stopped
     networks:
       - api-server

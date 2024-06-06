@@ -29,10 +29,6 @@ jobs:
             chmod 400 ~/django-key.pem
             ssh -i ~/django-key.pem ${{ secrets.SSH_USERNAME}}@${{ secrets.SSH_PUBLIC_IP}} "
                 cd storead-api
-                touch ./.envs/.prd/.django
-                touch ./.envs/.prd/.database
-                echo ${{ secrets.PRODUCTION_ENV }} >> ./.envs/.prd/.django
-                echo ${{ secrets.PRODUCTION_DB }} >> ./.envs/.prd/.database
                 git pull || exit 1
                 sudo make build || exit 1
             "

@@ -28,9 +28,9 @@ jobs:
             echo "${{ secrets.SSH_PEM_KEY }}" >> ~/django-key.pem
             chmod 400 ~/django-key.pem
             ssh -i ~/django-key.pem ${{ secrets.SSH_USERNAME}}@${{ secrets.SSH_PUBLIC_IP}} "
-                ls -al
                 cd storead-api
-                ${{ secrets.PRODUCTION_ENV }} >> .envs/.prd/.django
+                ls -al
+                ${{ secrets.PRODUCTION_ENV }} > ./.envs/.prd/.django
                 git pull || exit 1
-                make build || exit 1
+                sudo make build || exit 1
             "

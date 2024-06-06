@@ -1,4 +1,4 @@
-ENV ?= dev
+ENV ?= prd
 
 restart:
 	docker compose -f docker-compose.$(ENV).yml restart

@@ -27,7 +27,7 @@ django-filter = "^24.2"
 django-elasticsearch-dsl-drf = "^0.22.5"
 django-elasticsearch-dsl = "7.3.0"
 sentry-sdk = "^2.4.0"
-mysqlclient = "^2.2.4"
+psycopg2-binary = "^2.9.9"
 
 
 [tool.poetry.group.test.dependencies]

@@ -15,7 +15,6 @@ echo "==> Django setup, executing: migrate pro"
 python3 booklog/manage.py migrate --no-input
 echo "==> collections setup, executing: collectstatic"
 python booklog/manage.py collectstatic --no-input
-#exec python booklog/manage.py runserver 0.0.0.0:8000
 echo "==> runserver by gunicorn '0:8000' port bind"
 cd booklog
-exec gunicorn --config booklog/gunicorn_config.py config.wsgi:application
+exec gunicorn --bind 0:8000 config.wsgi:application

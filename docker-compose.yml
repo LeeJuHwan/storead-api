@@ -14,9 +14,11 @@ services:
   postgres:
     image: postgres
     volumes:
-      - local_postgres_data:/var/lib/postgresql/data
+      - production_postgres_data:/var/lib/postgresql/data
     env_file:
       - ./.envs/.prd/.database
+    ports:
+      - "5432:5432"
     networks:
       - api-server
 
@@ -74,7 +76,7 @@ networks:
         driver: bridge
 
 volumes:
-    static_volume:
-    media_volume:
-    es-data:
-    local_postgres_data: {}
+    static_volume: {}
+    media_volume: {}
+    es-data: {}
+    production_postgres_data: {}

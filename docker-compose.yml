@@ -58,8 +58,6 @@ services:
     build:
       context: ./docker/prd/nginx
       dockerfile: Dockerfile
-    env_file:
-      - ./.envs/.prd/.nginx
     ports:
         - "80:80"
         - "443:443"

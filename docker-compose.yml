@@ -54,6 +54,7 @@ services:
         - media_volume:/app/mediafiles
         - /var/certbot/conf:/etc/letsencrypt/:rw
         - /var/certbot/www/:/var/www/certbot/:r
+        - /etc/geoip/:/etc/nginx/geoip
     build:
         context: ./docker/prd/nginx
         dockerfile: Dockerfile
@@ -76,7 +77,7 @@ networks:
         driver: bridge
 
 volumes:
-    static_volume: {}
-    media_volume: {}
-    es-data: {}
-    production_postgres_data: {}
+  static_volume: {}
+  media_volume: {}
+  es-data: {}
+  production_postgres_data: {}

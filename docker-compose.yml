@@ -48,16 +48,18 @@ services:
   nginx:
     restart: always
     depends_on:
-        - api
+      - api
     volumes:
-        - static_volume:/app/staticfiles
-        - media_volume:/app/mediafiles
-        - /var/certbot/conf:/etc/letsencrypt/:rw
-        - /var/certbot/www/:/var/www/certbot/:r
-        - /etc/geoip/:/etc/nginx/geoip
+      - static_volume:/app/staticfiles
+      - media_volume:/app/mediafiles
+      - /var/certbot/conf:/etc/letsencrypt/:rw
+      - /var/certbot/www/:/var/www/certbot/:r
+      - /etc/geoip/:/etc/nginx/geoip
     build:
-        context: ./docker/prd/nginx
-        dockerfile: Dockerfile
+      context: ./docker/prd/nginx
+      dockerfile: Dockerfile
+    env_file:
+      - ./.envs/.prd/.nginx
     ports:
         - "80:80"
         - "443:443"

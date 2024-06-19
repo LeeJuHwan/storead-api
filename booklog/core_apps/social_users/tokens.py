@@ -25,7 +25,7 @@ def token_refresh(request) -> Response:
         access_token_lifetime = settings.SIMPLE_JWT["ACCESS_TOKEN_LIFETIME"]
         response.set_cookie("access_token", str(refresh.access_token), max_age=access_token_lifetime)
 
-    except Exception as e:
-        return Response({"error": str(e)}, status=e.status_code or status.HTTP_400_BAD_REQUEST)
+    except EmptyTokenException as e:
+        return Response({"detail": str(e)}, status=e.status_code)
 
     return response

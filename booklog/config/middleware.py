@@ -20,9 +20,13 @@ class RequestLoggingMiddleware(MiddlewareMixin):
             response_tag = "FAIL" if response.status_code >= 400 else "SUCCESS"
             user_name = "-"
             extra_log = ""
+            err_msg = ""
 
             if hasattr(request, "user"):
                 user_name = getattr(request.user, "username", "-")
+
+            if err_detail := response.data.get("message"):
+                err_msg += f"error message: {err_detail}"
 
             req_time = time.time() - self.start_time
 
@@ -33,7 +37,7 @@ class RequestLoggingMiddleware(MiddlewareMixin):
             log_content = {
                 "message": f"Response: [{response_tag}] -",
                 "api_domain": f"{remote_addr}{request.get_full_path()} ({request.method}|{response.status_code})",
-                "result": f"- response time: {req_time:.2f} seconds{extra_log} - user: {user_name}",
+                "result": f"- response time: {req_time:.2f} seconds{extra_log} {err_msg} / user: {user_name}",
             }
 
             self._display_log(response_tag)(" ".join([log_data for log_data in log_content.values()]))

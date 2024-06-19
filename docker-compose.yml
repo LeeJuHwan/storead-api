@@ -2,7 +2,7 @@ services:
   es:
     build:
       context: .
-      dockerfile: docker/dev/elastic-search/Dockerfile
+      dockerfile: docker/prd/elastic-search/Dockerfile
     volumes:
       - es-data:/usr/share/elasticsearch/data
     restart: always

@@ -108,16 +108,6 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
-REST_FRAMEWORK = {
-    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
-    "DEFAULT_PERMISSION_CLASSES": [
-        "rest_framework.permissions.IsAuthenticated",
-    ],
-    "DEFAULT_AUTHENTICATION_CLASSES": [
-        "dj_rest_auth.jwt_auth.JWTCookieAuthentication",
-    ],
-}
-
 # REST_USE_JWT = True
 REST_AUTH = {
     "SESSION_LOGIN": False,
@@ -173,6 +163,7 @@ MEDIA_ROOT = str(env.ROOT_DIR.parent / "mediafiles")
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+from ..rest_framework import *  # noqa
 from ..logging import *  # noqa
 from ..sentry import *  # noqa
 from ..swagger import *  # noqa

@@ -74,7 +74,7 @@ class ArticleElasticSearchView(DocumentViewSet):
                 "from": 0,
             },
         },
-        "title_suggest_match": {
+        "title_match": {
             "field": "title.edge_ngram_completion",
             "suggesters": [FUNCTIONAL_SUGGESTER_COMPLETION_MATCH],
             "default_suggester": FUNCTIONAL_SUGGESTER_COMPLETION_MATCH,
@@ -83,7 +83,6 @@ class ArticleElasticSearchView(DocumentViewSet):
 
     search_fields = (
         "title",
-        "title.edge_ngram_completion",
         "book_title",
         "description",
         "body",

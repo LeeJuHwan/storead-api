@@ -1,9 +1,9 @@
 from rest_framework.exceptions import APIException
 
 
-class EmptyUserNameException(APIException):
+class AlreadyUseUserNameError(APIException):
     status_code = 400
-    default_detail = "username must have input characters"
+    default_detail = "Username already used."
 
 
 class CantFollowYourSelf(APIException):
@@ -11,15 +11,8 @@ class CantFollowYourSelf(APIException):
     default_detail = "you can't follow yourself"
 
 
-class CantUnfollowNotFollowingUser(APIException):
+class CouldNotFoundProfile(APIException):
     status_code = 400
 
-    def __init__(self, username):
-        self.detail = {"detail": f"you can't unfollow {username}, since you were not following then in the first place"}
-
-
-class AlreadyFollowing(APIException):
-    status_code = 400
-
-    def __init__(self, username):
-        self.detail = {"detail": f"you are already following {username}"}
+    def __init__(self, info):
+        self.detail = f"`{info}` could not be found into profiles"

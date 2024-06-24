@@ -15,6 +15,11 @@ class Profile(TimeStampedModel):
         blank=True,
     )
 
+    class Meta:
+        db_table = "profiles"
+        verbose_name = _("profile")
+        verbose_name_plural = _("profiles")
+
     def __str__(self):
         return f"{self.user.username}'s Profile" if self.user.username else "Unkown's Profile"
 

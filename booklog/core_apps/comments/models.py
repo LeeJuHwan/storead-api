@@ -18,6 +18,7 @@ class Comment(TimeStampedModel):
         verbose_name = "Comment"
         verbose_name_plural = "Comments"
         ordering = ["created_at"]
+        db_table = "comments"
 
     def __str__(self):
         return f"{self.user.username} commented on {self.article.title}"

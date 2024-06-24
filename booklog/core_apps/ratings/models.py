@@ -23,6 +23,7 @@ class Rating(TimeStampedModel):
         unique_together = ("article", "user")
         verbose_name = _("Rating")
         verbose_name_plural = _("Ratings")
+        db_table = "ratings"
 
     def get_rating_display(self):
         return self.RATING_CHOICES[self.rating - 1][1]

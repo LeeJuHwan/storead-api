@@ -18,6 +18,7 @@ class Recommend(TimeStampedModel):
         verbose_name_plural = _("Recommendations")
         unique_together = ["user", "article"]
         ordering = ["-created_at"]
+        db_table = "recommend"
 
     def __str__(self):
         return f"{self.user.username} recommends {self.article.title}"
@@ -32,6 +33,7 @@ class ArticleView(TimeStampedModel):
         verbose_name = _("Article View")
         verbose_name_plural = _("Article Views")
         unique_together = ("article", "user", "viewer_ip")
+        db_table = "article_view"
 
     def __str__(self):
         return f"{self.article.title} viewed by {self.user.username if self.user else 'Anonymous'}"
@@ -57,6 +59,7 @@ class Article(TimeStampedModel):
     class Meta:
         verbose_name = _("Article")
         verbose_name_plural = _("Article")
+        db_table = "article"
 
     def __str__(self):
         return f"{self.author.username}'s {self.title}"

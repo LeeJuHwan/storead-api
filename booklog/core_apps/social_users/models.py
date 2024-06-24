@@ -57,6 +57,7 @@ class SocialUser(AbstractBaseUser):
     class Meta:
         verbose_name = _("user")
         verbose_name_plural = _("users")
+        db_table = "social_users"
 
     def __str__(self):
         return self.uuid

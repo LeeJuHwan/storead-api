@@ -21,11 +21,12 @@ class RequestLoggingMiddleware(MiddlewareMixin):
             user_name = "-"
             extra_log = ""
             err_msg = ""
+            response_data = getattr(response, "data", {})
 
             if hasattr(request, "user"):
                 user_name = getattr(request.user, "username", "-")
 
-            if err_detail := response.data.get("message"):
+            if err_detail := response_data.get("message"):
                 err_msg += f"error message: {err_detail}"
 
             req_time = time.time() - self.start_time

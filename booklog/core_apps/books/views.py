@@ -7,25 +7,23 @@ from typing import Optional
 
 from drf_spectacular.utils import extend_schema
 from rest_framework import serializers, status
-from rest_framework.exceptions import NotFound
-from rest_framework.generics import ListCreateAPIView
+
+# from rest_framework.generics import ListCreateAPIView
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
-from rest_framework.views import APIView
 
-from ..common.paginations import CommonCursorPagination
+from ..common import apis
 from ..common.swaggers import UuidSerializer
 from .models import Book
 from .queries import BookSelector
 from .serializers import BookListSerializer
 
 
-class BookListAPIView(ListCreateAPIView):
+class BookListAPIView(apis.BaseListAPIView):
     model = Book
     serializer_class = BookListSerializer
     permission_classes = [AllowAny]
-    pagination_class = CommonCursorPagination
     queryset = Book.objects.all()
     selector = BookSelector()
     ordering_fields = ["created_at"]
@@ -63,12 +61,13 @@ class BookListAPIView(ListCreateAPIView):
         request=RequestSerializer,
         responses=ResponseSerializer,
     )
-    def post(self, request, *args, **kwargs):
+    def post(self, request: Request, *args, **kwargs):
         isbn: str = request.data.get("isbn")
-        created = False
+        created: bool = False
+        book: Optional[Book] = None
 
         if isbn:
-            book: Optional[Book] = self.selector.get_book_by_isbn(isbn)
+            book: Book = self.selector.get_book_by_isbn(isbn)
 
         if book is None:
             request = self.RequestSerializer(data=request.data)
@@ -79,10 +78,10 @@ class BookListAPIView(ListCreateAPIView):
         response = self.ResponseSerializer(book)
         status_code = status.HTTP_201_CREATED if created else status.HTTP_200_OK
 
-        return Response(response.data, status=status_code)
+        return self.success_response(response.data, status_code=status_code)
 
 
-class BookDetailAPIView(APIView):
+class BookDetailAPIView(apis.BaseAPIView):
     permission_classes = [IsAuthenticated]
     queryset = Book.objects.all()
     selector = BookSelector()
@@ -106,7 +105,7 @@ class BookDetailAPIView(APIView):
         book = self.selector.get_book_by_id(book_id)
 
         if not book:
-            return NotFound("can't find book")
+            return self.fail_response("can't find the book")
 
         serializer_data = self.BookDetailResponse(book).data
-        return Response(serializer_data, status=status.HTTP_200_OK)
+        return self.success_response(serializer_data, status_code=status.HTTP_200_OK)

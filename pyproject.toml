@@ -45,7 +45,6 @@ build-backend = "poetry.core.masonry.api"
 [tool.black]
 line-length = 120
 target-version = ['py312']
-force-exclude = 'migrations'
 
 [tool.isort]
 profile = "black"

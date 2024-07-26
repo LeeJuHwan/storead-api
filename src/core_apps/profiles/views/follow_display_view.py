@@ -41,8 +41,8 @@ class UserFollowingListView(BaseAPIView):
         request=None,
         responses=FollowerRenderSerializer,
     )
-    def get(self, request, user_id):
-        profile = ProfileQuery.get_profile_by_profile_id(profile_id=user_id)
+    def get(self, request, profile_id):
+        profile = ProfileQuery.get_profile_by_profile_id(profile_id=profile_id)
         following_profiles = profile.followers.all()
         following_serializer = FollowingSerializer(following_profiles, many=True)
         response_data = {
@@ -63,8 +63,8 @@ class UserFollowerListView(BaseAPIView):
         tags=["팔로우"],
         responses=FollowerRenderSerializer(),
     )
-    def get(self, request, user_id):
-        profile = ProfileQuery.get_profile_by_user_uuid(uuid=user_id)
+    def get(self, request, profile_id):
+        profile = ProfileQuery.get_profile_by_profile_id(profile_id=profile_id)
         follower_profiles = profile.following.all()
         serializer = FollowingSerializer(follower_profiles, many=True)
         response_data = {

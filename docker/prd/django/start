@@ -10,11 +10,11 @@ set -o pipefail
 set -o nounset
 
 echo "==> Django setup, executing: makemigrations "
-python3 booklog/manage.py makemigrations
+python3 src/manage.py makemigrations
 echo "==> Django setup, executing: migrate pro"
-python3 booklog/manage.py migrate --no-input
+python3 src/manage.py migrate --no-input
 echo "==> collections setup, executing: collectstatic"
-python booklog/manage.py collectstatic --no-input
+python src/manage.py collectstatic --no-input
 echo "==> runserver by gunicorn '0:8000' port bind"
-cd booklog
+cd src
 exec gunicorn --bind 0:8000 config.wsgi:application

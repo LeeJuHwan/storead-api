@@ -8,8 +8,8 @@ ENV PYTHONUNBUFFERED 1
 
 RUN echo "==> Updating ubuntu apt packages..."
 RUN apt-get update \
-    && apt-get install -y gcc python3-dev musl-dev libmagic1 libffi-dev netcat-traditional sqlite3 \
-    build-essential libpq-dev
+    && apt-get install -y build-essential gcc  libmagic1 netcat-traditional \
+     libpq-dev python3-dev musl-dev libffi-dev
 
 RUN echo "==> Copying poetry files..."
 COPY poetry.lock pyproject.toml /app/
@@ -33,4 +33,4 @@ RUN chmod +x /start
 
 COPY . /app/
 
-#ENTRYPOINT [ "/entrypoint" ]
+ENTRYPOINT [ "/entrypoint" ]

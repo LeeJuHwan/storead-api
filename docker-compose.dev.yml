@@ -1,25 +1,23 @@
-version: '3.9'
-
 services:
-  es:
+  postgres:
     build:
       context: .
-      dockerfile: docker/dev/elastic-search/Dockerfile
+      dockerfile: docker/dev/database/Dockerfile
     volumes:
-      - es-data:/usr/share/elasticsearch/data
-    restart: always
+      - stage_postgres_data:/var/lib/postgresql/data
+    env_file:
+      - ./.envs/.dev/.database
     ports:
-      - "9200:9200"
+      - "5433:5432"
     networks:
       - api-server
 
   api:
+    container_name: api-server
     build:
       context: .
       dockerfile: docker/dev/django/Dockerfile
     command: /start
-    depends_on:
-      - es
     volumes:
       - .:/app
       - static_volume:/app/staticfiles
@@ -27,14 +25,16 @@ services:
     ports:
       - '8000:8000'
     environment:
-      - DJANGO_SETTINGS_MODULE=config.settings.dev
+      - DJANGO_SETTINGS_MODULE=config.django.dev
     env_file:
       - ./.envs/.dev/.django
+      - ./.envs/.dev/.database
     restart: unless-stopped
     networks:
       - api-server
 
   nginx:
+    container_name: nginx
     restart: always
     depends_on:
         - api
@@ -56,4 +56,4 @@ networks:
 volumes:
     static_volume:
     media_volume:
-    es-data:
+    stage_postgres_data:

@@ -28,5 +28,11 @@ repos:
     hooks:
       - id: flake8
         args: [--max-line-length=120]
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.5.5
+    hooks:
+      - id: ruff
+        alias: autoformat
+        args: [ --fix ]
 default_language_version:
-  python: python3.9
+  python: python3.12

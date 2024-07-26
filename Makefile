@@ -1,4 +1,4 @@
-RUNFILE ?= docker-compose.yml
+RUNFILE ?= docker-compose.dev.yml
 
 restart:
 	docker compose -f $(RUNFILE) restart
@@ -15,23 +15,20 @@ down:
 down-v:
 	docker compose -f $(RUNFILE) down -v
 
-logs:
+show-logs:
 	docker compose -f $(RUNFILE) logs
 
 logs-api:
 	docker compose -f $(RUNFILE) logs api
 
 createadmin:
-	docker compose -f $(RUNFILE) run --rm api python booklog/manage.py createadmin
+	docker compose -f $(RUNFILE) run --rm api python src/manage.py createadmin
 
 makemigrations:
-	docker compose -f $(RUNFILE) run --rm api python booklog/manage.py makemigrations
+	docker compose -f $(RUNFILE) run --rm api python src/manage.py makemigrations
 
 migrate:
-	docker compose -f $(RUNFILE) run --rm api python booklog/manage.py migrate
+	docker compose -f $(RUNFILE) run --rm api python src/manage.py migrate
 
 dbshell:
-	docker compose -f $(RUNFILE) run --rm api python booklog/manage.py dbshell
-
-es-rebuild:
-	docker compose -f $(RUNFILE) run --rm api python booklog/manage.py search_index --rebuild
+	docker compose -f $(RUNFILE) exec postgres psql --username=storead --dbname=storead-live

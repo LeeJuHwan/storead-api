@@ -1,0 +1,10 @@
+name: storead-infra
+runtime:
+  name: python
+  options:
+    toolchain: poetry
+description: Managing book review for developers
+config:
+  pulumi:tags:
+    value:
+      pulumi:template: aws-python

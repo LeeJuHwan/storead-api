@@ -6,16 +6,16 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('books', '0002_alter_book_thumbnail_url_alter_book_table'),
+        ("books", "0002_alter_book_thumbnail_url_alter_book_table"),
     ]
 
     operations = [
         migrations.AddIndex(
-            model_name='book',
-            index=models.Index(fields=['isbn'], name='books_isbn_ce4a1a_idx'),
+            model_name="book",
+            index=models.Index(fields=["isbn"], name="books_isbn_ce4a1a_idx"),
         ),
         migrations.AddIndex(
-            model_name='book',
-            index=models.Index(fields=['title'], name='books_title_7a737c_idx'),
+            model_name="book",
+            index=models.Index(fields=["title"], name="books_title_7a737c_idx"),
         ),
     ]

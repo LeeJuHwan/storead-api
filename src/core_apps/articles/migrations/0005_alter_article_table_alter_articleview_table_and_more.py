@@ -6,20 +6,20 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('articles', '0004_alter_article_slug'),
+        ("articles", "0004_alter_article_slug"),
     ]
 
     operations = [
         migrations.AlterModelTable(
-            name='article',
-            table='article',
+            name="article",
+            table="article",
         ),
         migrations.AlterModelTable(
-            name='articleview',
-            table='article_view',
+            name="articleview",
+            table="article_view",
         ),
         migrations.AlterModelTable(
-            name='recommend',
-            table='recommend',
+            name="recommend",
+            table="recommend",
         ),
     ]

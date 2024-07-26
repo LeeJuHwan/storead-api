@@ -7,13 +7,15 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('articles', '0005_alter_article_table_alter_articleview_table_and_more'),
+        ("articles", "0005_alter_article_table_alter_articleview_table_and_more"),
     ]
 
     operations = [
         migrations.RunSQL(sql="CREATE EXTENSION pg_bigm;", reverse_sql=""),
         migrations.AddIndex(
-            model_name='article',
-            index=django.contrib.postgres.indexes.GinIndex(fields=['title'], name='article_title_gin_index', opclasses=['gin_bigm_ops']),
+            model_name="article",
+            index=django.contrib.postgres.indexes.GinIndex(
+                fields=["title"], name="article_title_gin_index", opclasses=["gin_bigm_ops"]
+            ),
         ),
     ]

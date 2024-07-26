@@ -8,24 +8,23 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Profile',
+            name="Profile",
             fields=[
-                ('pkid', models.BigAutoField(editable=False, primary_key=True, serialize=False)),
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, unique=True)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
-                ('about_me', models.TextField(default='say something about yourself', verbose_name='about me')),
-                ('profile_photo', models.ImageField(upload_to='profile_photo', verbose_name='profile photo')),
-                ('followers', models.ManyToManyField(blank=True, related_name='following', to='profiles.profile')),
+                ("pkid", models.BigAutoField(editable=False, primary_key=True, serialize=False)),
+                ("id", models.UUIDField(default=uuid.uuid4, editable=False, unique=True)),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
+                ("about_me", models.TextField(default="say something about yourself", verbose_name="about me")),
+                ("profile_photo", models.ImageField(upload_to="profile_photo", verbose_name="profile photo")),
+                ("followers", models.ManyToManyField(blank=True, related_name="following", to="profiles.profile")),
             ],
             options={
-                'ordering': ['-created_at', '-updated_at'],
-                'abstract': False,
+                "ordering": ["-created_at", "-updated_at"],
+                "abstract": False,
             },
         ),
     ]

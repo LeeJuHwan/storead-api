@@ -7,13 +7,15 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('articles', '0002_initial'),
+        ("articles", "0002_initial"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='article',
-            name='slug',
-            field=autoslug.fields.AutoSlugField(allow_unicode=True, always_update=True, editable=False, populate_from='title', unique=True),
+            model_name="article",
+            name="slug",
+            field=autoslug.fields.AutoSlugField(
+                allow_unicode=True, always_update=True, editable=False, populate_from="title", unique=True
+            ),
         ),
     ]

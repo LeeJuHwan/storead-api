@@ -10,54 +10,65 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Article',
+            name="Article",
             fields=[
-                ('pkid', models.BigAutoField(editable=False, primary_key=True, serialize=False)),
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, unique=True)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
-                ('title', models.CharField(max_length=255, verbose_name='Title')),
-                ('slug', autoslug.fields.AutoSlugField(always_update=True, editable=False, populate_from='title', unique=True)),
-                ('description', models.CharField(max_length=255, verbose_name='description')),
-                ('body', models.TextField(verbose_name='article content')),
+                ("pkid", models.BigAutoField(editable=False, primary_key=True, serialize=False)),
+                ("id", models.UUIDField(default=uuid.uuid4, editable=False, unique=True)),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
+                ("title", models.CharField(max_length=255, verbose_name="Title")),
+                (
+                    "slug",
+                    autoslug.fields.AutoSlugField(
+                        always_update=True, editable=False, populate_from="title", unique=True
+                    ),
+                ),
+                ("description", models.CharField(max_length=255, verbose_name="description")),
+                ("body", models.TextField(verbose_name="article content")),
             ],
             options={
-                'verbose_name': 'Article',
-                'verbose_name_plural': 'Article',
+                "verbose_name": "Article",
+                "verbose_name_plural": "Article",
             },
         ),
         migrations.CreateModel(
-            name='ArticleView',
+            name="ArticleView",
             fields=[
-                ('pkid', models.BigAutoField(editable=False, primary_key=True, serialize=False)),
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, unique=True)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
-                ('viewer_ip', models.GenericIPAddressField(blank=True, null=True, verbose_name='viewer IP')),
+                ("pkid", models.BigAutoField(editable=False, primary_key=True, serialize=False)),
+                ("id", models.UUIDField(default=uuid.uuid4, editable=False, unique=True)),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
+                ("viewer_ip", models.GenericIPAddressField(blank=True, null=True, verbose_name="viewer IP")),
             ],
             options={
-                'verbose_name': 'Article View',
-                'verbose_name_plural': 'Article Views',
+                "verbose_name": "Article View",
+                "verbose_name_plural": "Article Views",
             },
         ),
         migrations.CreateModel(
-            name='Recommend',
+            name="Recommend",
             fields=[
-                ('pkid', models.BigAutoField(editable=False, primary_key=True, serialize=False)),
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, unique=True)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
-                ('article', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='article_recommends', to='articles.article')),
+                ("pkid", models.BigAutoField(editable=False, primary_key=True, serialize=False)),
+                ("id", models.UUIDField(default=uuid.uuid4, editable=False, unique=True)),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
+                (
+                    "article",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="article_recommends",
+                        to="articles.article",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Recommendation',
-                'verbose_name_plural': 'Recommendations',
-                'ordering': ['-created_at'],
+                "verbose_name": "Recommendation",
+                "verbose_name_plural": "Recommendations",
+                "ordering": ["-created_at"],
             },
         ),
     ]

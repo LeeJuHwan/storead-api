@@ -1,6 +1,8 @@
 services:
   postgres:
-    image: postgres
+    build:
+      context: .
+      dockerfile: docker/prd/database/Dockerfile
     volumes:
       - production_postgres_data:/var/lib/postgresql/data
     env_file:

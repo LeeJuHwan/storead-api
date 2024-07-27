@@ -24,11 +24,20 @@ jobs:
             chmod 644 ~/.ssh/known_hosts
 
       - name: SSH and deploy
+        env:
+          DB_ENV: ${{ secrets.DB_ENV }}
+          AWS_ENV: ${{ secrets.AWS_ENV }}
+          DJANGO_ENV: ${{ secrets.DJANGO_ENV }}
         run: |
             echo "${{ secrets.SSH_PEM_KEY }}" >> ~/django-key.pem
             chmod 400 ~/django-key.pem
             ssh -i ~/django-key.pem ${{ secrets.SSH_USERNAME}}@${{ secrets.SSH_PUBLIC_IP}} "
                 cd storead-api
                 git pull || exit 1
+
+                echo "$DB" > .envs/.prd/.db
+                echo "$AWS" > .envs/.prd/.aws
+                echo "$DJANGO" > .envs/.prd/.django
+
                 sudo make build || exit 1
             "

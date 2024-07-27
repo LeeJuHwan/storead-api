@@ -35,9 +35,9 @@ jobs:
                 cd storead-api
                 git pull || exit 1
 
-                echo "DB_ENV" > .envs/.prd/.db
-                echo "AWS_ENV" > .envs/.prd/.aws
-                echo "DJANGO_ENV" > .envs/.prd/.django
+                echo "$DB_ENV" > .envs/.prd/.db
+                echo "$AWS_ENV" > .envs/.prd/.aws
+                echo "$DJANGO_ENV" > .envs/.prd/.django
 
                 sudo make build || exit 1
             "

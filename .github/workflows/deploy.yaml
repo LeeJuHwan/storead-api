@@ -23,21 +23,37 @@ jobs:
             echo "${{ secrets.SSH_KNOWN_HOSTS }}" >> ~/.ssh/known_hosts
             chmod 644 ~/.ssh/known_hosts
 
-      - name: SSH and deploy
+      - name: SSH connection metadata
+        run: |
+            echo "${{ secrets.SSH_PEM_KEY }}" >> ~/django-key.pem
+            chmod 400 ~/django-key.pem
+
+      - name: Source code synchronization
+        run: |
+            ssh -i ~/django-key.pem ${{ secrets.SSH_USERNAME}}@${{ secrets.SSH_PUBLIC_IP}} "
+            cd storead-api
+            git pull || exit 1
+
+      - name: Create env files
         env:
           DB_ENV: ${{ secrets.DB }}
           AWS_ENV: ${{ secrets.AWS }}
           DJANGO_ENV: ${{ secrets.DJANGO }}
         run: |
-            echo "${{ secrets.SSH_PEM_KEY }}" >> ~/django-key.pem
-            chmod 400 ~/django-key.pem
+            ssh -i ~/django-key.pem ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_PUBLIC_IP }} "
+            cd storead-api
+
+            touch .envs/.prd/.database
+            touch .envs/.prd/.aws
+            touch .envs/.prd/.django
+
+            echo "$DB_ENV" >> .envs/.prd/.database
+            echo "$AWS_ENV" >> .envs/.prd/.aws
+            echo "$DJANGO_ENV" >> .envs/.prd/.django
+
+      - name: Deploy
+        run: |
             ssh -i ~/django-key.pem ${{ secrets.SSH_USERNAME}}@${{ secrets.SSH_PUBLIC_IP}} "
                 cd storead-api
-                git pull || exit 1
-
-                echo "$DB_ENV" > .envs/.prd/.database
-                echo "$AWS_ENV" > .envs/.prd/.aws
-                echo "$DJANGO_ENV" > .envs/.prd/.django
-
                 sudo make build || exit 1
             "

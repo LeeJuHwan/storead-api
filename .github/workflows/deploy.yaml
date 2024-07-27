@@ -43,11 +43,15 @@ jobs:
         run: |
             ssh -i ~/django-key.pem ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_PUBLIC_IP }} "
               cd storead-api
+              touch .envs/.prd/.database
+              touch .envs/.prd/.aws
+              touch .envs/.prd/.django
 
-              echo -e "$DB_ENV" > .envs/.prd/.database
-              echo -e "$AWS_ENV" > .envs/.prd/.aws
-              echo -e "$DJANGO_ENV" > .envs/.prd/.django
+              echo "$DB_ENV" >> .envs/.prd/.database
+              echo "$AWS_ENV" >> .envs/.prd/.aws
+              echo "$DJANGO_ENV" >> .envs/.prd/.django
             "
+        shell: bash
 
       - name: Deploy
         run: |

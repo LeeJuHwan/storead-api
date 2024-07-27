@@ -25,9 +25,9 @@ jobs:
 
       - name: SSH and deploy
         env:
-          DB_ENV: ${{ secrets.DB_ENV }}
-          AWS_ENV: ${{ secrets.AWS_ENV }}
-          DJANGO_ENV: ${{ secrets.DJANGO_ENV }}
+          DB_ENV: ${{ secrets.DB }}
+          AWS_ENV: ${{ secrets.AWS }}
+          DJANGO_ENV: ${{ secrets.DJANGO }}
         run: |
             echo "${{ secrets.SSH_PEM_KEY }}" >> ~/django-key.pem
             chmod 400 ~/django-key.pem

@@ -35,20 +35,6 @@ jobs:
               git pull || exit 1
             "
 
-      - name: Create env files
-        env:
-          DB_ENV: ${{ secrets.DB }}
-          AWS_ENV: ${{ secrets.AWS }}
-          DJANGO_ENV: ${{ secrets.DJANGO }}
-        run: |
-            ssh -i ~/django-key.pem ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_PUBLIC_IP }} "
-              cd storead-api
-
-              echo "$DB_ENV" > .envs/.prd/.database
-              echo "$AWS_ENV" > .envs/.prd/.aws
-              echo "$DJANGO_ENV" > .envs/.prd/.django
-            "
-
       - name: Deploy
         run: |
             ssh -i ~/django-key.pem ${{ secrets.SSH_USERNAME}}@${{ secrets.SSH_PUBLIC_IP}} "

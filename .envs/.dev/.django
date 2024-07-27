@@ -1,3 +1,0 @@
-SIGNING_KEY=change
-DJANGO_DEBUG=True
-LOG_DIR=./logs

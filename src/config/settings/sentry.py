@@ -12,7 +12,9 @@ if SENTRY_DSN:
         dsn=SENTRY_DSN,
         integrations=[DjangoIntegration()],
         send_default_pii=True,
+        # NITE: 1.0 to capture 100%
         traces_sample_rate=1.0,
+        profiles_sample_rate=1.0,
         environment=environment,
         release="storead-api@0.1.0",
     )

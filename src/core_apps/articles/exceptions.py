@@ -6,6 +6,13 @@ class DuplicateRecommendArticle(APIException):
     default_detail = "You have already recommend on this article."
 
 
+class RecommendationNotFoundException(APIException):
+    status_code = 404
+
+    def __init__(self, user, article):
+        self.detail = f"Does not found recommendation user: {user}, article: {article}"
+
+
 class ArticleIdNotFound(APIException):
     status_code = 404
     default_detail = "article_id is not found"

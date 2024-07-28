@@ -13,7 +13,7 @@ class Book(TimeStampedModel):
     thumbnail_url = models.ImageField(
         verbose_name=_("Thumbnail"),
         upload_to="book_thumbnails",
-        default="default_book.png",
+        default="book_thumbnails/default_book.png",
     )
 
     class Meta:

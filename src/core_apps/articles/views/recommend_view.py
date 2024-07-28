@@ -1,58 +1,37 @@
-from django.shortcuts import get_object_or_404
 from drf_spectacular.utils import extend_schema
-from rest_framework import generics, status
-from rest_framework.response import Response
+from rest_framework import status
 
-from core_apps.articles.exceptions import DuplicateRecommendArticle
-from core_apps.articles.models import Article, Recommend
 from core_apps.articles.serializers.article_serializer import RecommendSerializer
-from core_apps.shared.swaggers import OutputSerializer, UuidSerializer
+from core_apps.articles.services import schema
+from core_apps.articles.services.recommend_service import RecommendService
+from core_apps.shared.apis import BaseAPIView
+from core_apps.shared.swaggers import DeleteOutputSchema, UuidSerializer
 
 
-class RecommendArticleView(generics.CreateAPIView, generics.DestroyAPIView):
-    queryset = Recommend.objects.all()
-    serializer_class = RecommendSerializer
-
-    def create(self, request, *args, **kwargs):
-        user = request.user
-        article_id = kwargs.get("article_id")
-        article = get_object_or_404(Article, id=article_id)
-
-        if Recommend.objects.filter(user=user, article=article).exists():
-            raise DuplicateRecommendArticle()
-
-        recommend = Recommend.objects.create(user=user, article=article)
-        recommend.save()
-        return Response(
-            {
-                "message": "recommend added to article",
-            },
-            status=status.HTTP_201_CREATED,
-        )
+class RecommendArticleView(BaseAPIView):
+    service = RecommendService()
 
     @extend_schema(
         summary="게시글 추천 API",
-        tags=["게시글"],
+        tags=["추천"],
         request=UuidSerializer,
-        responses=OutputSerializer,
+        responses=schema.RecommendCreateOutputSchema(),
     )
-    def post(self, request, *args, **kwargs):
-        return self.create(request, *args, **kwargs)
+    def post(self, request, article_id, *args, **kwargs):
+        recommend = self.service.create_recommend(request.user, article_id)
+        output_serializer = RecommendSerializer(recommend)
+        return self.success_response(
+            output_serializer.data, message="successfully recommend on article", status_code=status.HTTP_201_CREATED
+        )
 
     @extend_schema(
         summary="게시글 추천 취소 API",
-        tags=["게시글"],
+        tags=["추천"],
         request=UuidSerializer,
-        responses=OutputSerializer,
+        responses={200: DeleteOutputSchema()},
     )
-    def delete(self, request, *args, **kwargs):
+    def delete(self, request, article_id, *args, **kwargs):
         user = request.user
-        article_id = kwargs.get("article_id")
-        article = get_object_or_404(Article, id=article_id)
 
-        clap = get_object_or_404(Recommend, user=user, article=article)
-        clap.delete()
-        return Response(
-            {"message": "Recommend cancel from article"},
-            status=status.HTTP_204_NO_CONTENT,
-        )
+        self.service.delete_recommend(user, article_id)
+        return self.success_response(message="Recommend cancel from article", status_code=status.HTTP_200_OK)

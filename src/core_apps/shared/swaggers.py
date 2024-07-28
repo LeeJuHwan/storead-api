@@ -21,6 +21,10 @@ class NoContentSerializer(serializers.Serializer):
     message = serializers.CharField()
 
 
+class DeleteOutputSchema(CommonRenderResponse):
+    results = NoContentSerializer()
+
+
 def result_serializer(obj=None, component_name=None):
     if not component_name:
         import uuid

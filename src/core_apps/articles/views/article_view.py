@@ -6,14 +6,11 @@ from rest_framework import permissions, status
 from core_apps.articles.models import Article, ArticleView
 from core_apps.articles.permissions import IsOwnerOrReadOnly
 from core_apps.articles.serializers import ArticleCreateRenderRequest, ArticleSerializer
+from core_apps.articles.services import schema
 from core_apps.articles.services.article_service import ArticleService
 from core_apps.shared.apis import BaseAPIView, BaseListAPIView
 from core_apps.shared.paginations import CommonCursorPagination
-from core_apps.shared.swaggers import (
-    CommonRenderResponse,
-    UuidSerializer,
-    result_serializer,
-)
+from core_apps.shared.swaggers import DeleteOutputSchema, UuidSerializer
 
 User = get_user_model()
 
@@ -27,13 +24,6 @@ class ArticleListCreateView(BaseListAPIView):
         "created_at",
         "updated_at",
     ]
-
-    @staticmethod
-    def render_response(many=False):
-        class ArticleRenderResponse(CommonRenderResponse):
-            results = result_serializer(obj=ArticleSerializer(many=many), component_name="article")
-
-        return ArticleRenderResponse()
 
     def get_permissions(self):
         permission_options = {
@@ -52,7 +42,7 @@ class ArticleListCreateView(BaseListAPIView):
         parameters=[
             OpenApiParameter(name="q", description="게시글 검색 키워드", required=False, type=OpenApiTypes.STR),
         ],
-        responses=render_response(many=True),
+        responses=schema.article_render_response(many=True),
     )
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
@@ -61,7 +51,7 @@ class ArticleListCreateView(BaseListAPIView):
         summary="게시글 생성 API",
         tags=["게시글"],
         request=ArticleCreateRenderRequest,
-        responses=render_response(),
+        responses=schema.article_render_response(),
     )
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -72,9 +62,6 @@ class ArticleListCreateView(BaseListAPIView):
 
 class ArticleDetailAPI(BaseAPIView):
     service = ArticleService()
-
-    class ArticleOutputSchema(CommonRenderResponse):
-        results = ArticleSerializer()
 
     def get_permissions(self):
         permission_options = {
@@ -96,7 +83,7 @@ class ArticleDetailAPI(BaseAPIView):
         summary="상세 게시글 조회 API",
         tags=["게시글"],
         request=UuidSerializer,
-        responses=ArticleOutputSchema(),
+        responses=schema.ArticleOutputSchema(),
     )
     def get(self, request, article_id):
         article = self.service.get_article(article_id)
@@ -112,7 +99,7 @@ class ArticleDetailAPI(BaseAPIView):
         summary="게시글 수정 API",
         tags=["게시글"],
         request=UuidSerializer,
-        responses=ArticleOutputSchema(),
+        responses=schema.ArticleOutputSchema(),
     )
     def put(self, request, article_id):
         updated_product = self.service.update_article(article_id, self.author_id, request.data)
@@ -123,7 +110,8 @@ class ArticleDetailAPI(BaseAPIView):
         summary="게시글 삭제 API",
         tags=["게시글"],
         request=UuidSerializer,
+        responses={200: DeleteOutputSchema()},
     )
     def delete(self, request, article_id):
         self.service.delete_article(article_id, self.author_id)
-        return self.success_response(message="[HARD DELETE] deleted successfully!", status_code=204)
+        return self.success_response(message="[HARD DELETE] deleted successfully!")

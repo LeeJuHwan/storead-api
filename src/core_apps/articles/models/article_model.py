@@ -4,10 +4,10 @@ from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 from taggit.managers import TaggableManager
 
-from core_apps.articles.services.read_time_engine import ArticleReadTimeEngine
 from core_apps.books.models import Book
 from core_apps.shared.models import TimeStampedModel
 from core_apps.social_users.models import SocialUser
+from utils.article.read_time_engine import ArticleReadTimeEngine
 from utils.common.unique_slugify import generate_unique_slugify
 
 

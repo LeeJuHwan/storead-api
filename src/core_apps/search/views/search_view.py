@@ -25,7 +25,7 @@ class SearchAPIView(BaseListAPIView):
 
     @extend_schema(
         summary="게시글 검색 API",
-        tags=["게시글"],
+        tags=["검색"],
         parameters=[
             OpenApiParameter(name="q", description="게시글 검색 키워드", required=False, type=OpenApiTypes.STR),
         ],

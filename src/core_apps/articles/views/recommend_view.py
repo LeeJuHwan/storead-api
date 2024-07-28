@@ -1,8 +1,8 @@
 from drf_spectacular.utils import extend_schema
 from rest_framework import status
 
+from core_apps.articles.serializers import schema
 from core_apps.articles.serializers.article_serializer import RecommendSerializer
-from core_apps.articles.services import schema
 from core_apps.articles.services.recommend_service import RecommendService
 from core_apps.shared.apis import BaseAPIView
 from core_apps.shared.swaggers import DeleteOutputSchema, UuidSerializer

@@ -5,8 +5,11 @@ from rest_framework import permissions, status
 
 from core_apps.articles.models import Article, ArticleView
 from core_apps.articles.permissions import IsOwnerOrReadOnly
-from core_apps.articles.serializers import ArticleCreateRenderRequest, ArticleSerializer
-from core_apps.articles.services import schema
+from core_apps.articles.serializers import (
+    ArticleCreateRenderRequest,
+    ArticleSerializer,
+    schema,
+)
 from core_apps.articles.services.article_service import ArticleService
 from core_apps.shared.apis import BaseAPIView, BaseListAPIView
 from core_apps.shared.paginations import CommonCursorPagination

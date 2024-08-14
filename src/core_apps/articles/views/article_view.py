@@ -11,6 +11,7 @@ from core_apps.articles.serializers import (
     schema,
 )
 from core_apps.articles.services.article_service import ArticleService
+from core_apps.articles.services.recommend_service import RecommendService
 from core_apps.shared.apis import BaseAPIView, BaseListAPIView
 from core_apps.shared.paginations import CommonCursorPagination
 from core_apps.shared.swaggers import DeleteOutputSchema, UuidSerializer
@@ -133,6 +134,23 @@ class MyArticleDetailAPI(BaseListAPIView):
 
     @extend_schema(
         summary="내가 작성한 게시글 API",
+        tags=["게시글"],
+        responses=schema.ArticleOutputSchema(),
+    )
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+
+class MyRecommendArticleAPI(BaseListAPIView):
+    service = RecommendService()
+    serializer_class = ArticleSerializer
+
+    def get_queryset(self):
+        my_recommend_article_list = self.service.get_my_recommend_article_list(self.request.user)
+        return my_recommend_article_list
+
+    @extend_schema(
+        summary="내가 추천한 게시글 API",
         tags=["게시글"],
         responses=schema.ArticleOutputSchema(),
     )

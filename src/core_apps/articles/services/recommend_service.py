@@ -20,6 +20,11 @@ class RecommendService:
 
         return recommend
 
+    def get_my_recommend_article_list(self, user):
+        recommend_article_list = self.article_query.get_my_recommend_articles(user)
+
+        return recommend_article_list
+
     def create_recommend(self, user, article_id):
         article = self.article_query.get_article(user, article_id)
 

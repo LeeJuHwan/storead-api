@@ -21,6 +21,10 @@ class ArticleQuery(BaseSelector):
             raise ArticleIdNotFound
 
     @staticmethod
+    def get_my_recommend_articles(user):
+        return Article.objects.filter(article_recommends__user=user)
+
+    @staticmethod
     def get_article_by_uuid(article_id: str) -> Optional[Article]:
         """
         UUID로 게시글 조회

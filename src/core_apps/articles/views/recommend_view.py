@@ -8,7 +8,7 @@ from core_apps.shared.apis import BaseAPIView
 from core_apps.shared.swaggers import DeleteOutputSchema, UuidSerializer
 
 
-class RecommendArticleView(BaseAPIView):
+class RecommendArticleAPI(BaseAPIView):
     service = RecommendService()
 
     @extend_schema(

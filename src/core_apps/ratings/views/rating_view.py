@@ -7,7 +7,7 @@ from core_apps.ratings.services.rating_service import RatingService
 from core_apps.shared.apis import BaseAPIView
 
 
-class RatingAPIView(BaseAPIView):
+class RatingAPI(BaseAPIView):
     permission_classes = [IsOwnerOrReadOnly]
     serializer = RatingSerializer
     service = RatingService()

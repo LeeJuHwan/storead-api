@@ -1,4 +1,4 @@
-RUNFILE ?= docker-compose.yml
+RUNFILE ?= docker-compose.dev.yml
 
 restart:
 	docker compose -f $(RUNFILE) restart
@@ -20,9 +20,6 @@ show-logs:
 
 logs-api:
 	docker compose -f $(RUNFILE) logs api
-
-createadmin:
-	docker compose -f $(RUNFILE) run --rm api python src/manage.py createadmin
 
 makemigrations:
 	docker compose -f $(RUNFILE) run --rm api python src/manage.py makemigrations

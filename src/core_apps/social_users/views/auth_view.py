@@ -41,7 +41,7 @@ class SocialLoginServiceMixin(BaseAPIView, SocialOAuthService):
             return Response(response_message, status=e.status_code or status.HTTP_400_BAD_REQUEST)
 
 
-class GoogleLogin(SocialLoginServiceMixin):
+class GoogleLoginAPI(SocialLoginServiceMixin):
     platform = "google"
     uuid_key = "user_id"
 
@@ -66,7 +66,7 @@ class GoogleLogin(SocialLoginServiceMixin):
         return super().get(request, *args, **kwargs)
 
 
-class KakaoLogin(SocialLoginServiceMixin):
+class KakaoLoginAPI(SocialLoginServiceMixin):
     platform = "kakao"
     uuid_key = "id"
 
@@ -91,7 +91,7 @@ class KakaoLogin(SocialLoginServiceMixin):
         return super().get(request, *args, **kwargs)
 
 
-class GithubLogin(SocialLoginServiceMixin):
+class GithubLoginAPI(SocialLoginServiceMixin):
     platform = "github"
     uuid_key = "id"
 
@@ -130,7 +130,7 @@ class SocialLogutAPI(BaseAPIView, SocialOAuthService):
         return self.social_logout()
 
 
-class TokenVerifyAPIView(TokenVerifyView):
+class TokenVerifyAPI(TokenVerifyView):
     @extend_schema(
         summary="토큰 검증 API",
         tags=["토큰"],
@@ -139,7 +139,7 @@ class TokenVerifyAPIView(TokenVerifyView):
         return super().post(request, *args, **kwargs)
 
 
-class TokenRefreshAPIView(BaseAPIView):
+class TokenRefreshAPI(BaseAPIView):
     permission_classes = (AllowAny,)
 
     @extend_schema(

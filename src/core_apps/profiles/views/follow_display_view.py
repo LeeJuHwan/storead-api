@@ -7,7 +7,7 @@ from core_apps.shared.apis import BaseAPIView
 from core_apps.shared.swaggers import CommonRenderResponse, result_serializer
 
 
-class MyFollowerListView(BaseAPIView):
+class MyFollowerListAPI(BaseAPIView):
     permission_classes = [AllowAny]
 
     class FollowerRenderSerializer(CommonRenderResponse):
@@ -29,7 +29,7 @@ class MyFollowerListView(BaseAPIView):
         return self.success_response(response_data)
 
 
-class UserFollowingListView(BaseAPIView):
+class UserFollowingListAPI(BaseAPIView):
     permission_classes = [AllowAny]
 
     class FollowerRenderSerializer(CommonRenderResponse):
@@ -52,7 +52,7 @@ class UserFollowingListView(BaseAPIView):
         return self.success_response(response_data)
 
 
-class UserFollowerListView(BaseAPIView):
+class UserFollowerListAPI(BaseAPIView):
     permission_classes = [AllowAny]
 
     class FollowerRenderSerializer(CommonRenderResponse):

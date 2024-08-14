@@ -22,7 +22,7 @@ from core_apps.shared import apis
 from core_apps.shared.swaggers import UuidSerializer
 
 
-class BookListAPIView(apis.BaseListAPIView):
+class BookListAPI(apis.BaseListAPIView):
     model = Book
     serializer_class = BookListSerializer
     permission_classes = [AllowAny]
@@ -56,7 +56,7 @@ class BookListAPIView(apis.BaseListAPIView):
         return self.success_response(output_serializer.data, status_code=status_code)
 
 
-class BookDetailAPIView(apis.BaseAPIView):
+class BookDetailAPI(apis.BaseAPIView):
     permission_classes = [AllowAny]
     service = BookService()
 

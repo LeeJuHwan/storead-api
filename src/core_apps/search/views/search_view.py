@@ -11,7 +11,7 @@ from core_apps.shared.apis import BaseListAPIView
 from core_apps.shared.swaggers import CommonRenderResponse, result_serializer
 
 
-class SearchAPIView(BaseListAPIView):
+class SearchAPI(BaseListAPIView):
     permission_classes = [AllowAny]
     serializer_class = ArticleSerializer
     queryset = Article.objects.all()

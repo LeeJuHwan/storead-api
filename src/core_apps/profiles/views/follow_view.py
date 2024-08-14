@@ -9,7 +9,7 @@ from core_apps.shared.swaggers import (
 )
 
 
-class FollowAPIView(BaseAPIView):
+class FollowAPI(BaseAPIView):
     class FollowRenderSerializer(CommonRenderResponse):
         results = result_serializer(component_name="follow")
 
@@ -34,7 +34,7 @@ class FollowAPIView(BaseAPIView):
         return self.success_response(message=f"You are now following {profile.user.username}")
 
 
-class UnfollowAPIView(BaseAPIView):
+class UnfollowAPI(BaseAPIView):
     class FollowRenderSerializer(CommonRenderResponse):
         results = result_serializer(component_name="follow")
 

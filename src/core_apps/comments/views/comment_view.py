@@ -12,7 +12,7 @@ from core_apps.shared.apis import BaseAPIView, BaseListAPIView
 from core_apps.shared.swaggers import UuidSerializer
 
 
-class CommentListCreateView(BaseListAPIView):
+class CommentListCreateAPI(BaseListAPIView):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
     service = CommentService()
@@ -62,7 +62,7 @@ class CommentListCreateView(BaseListAPIView):
         )
 
 
-class CommentUpdateDeleteView(BaseAPIView):
+class CommentUpdateDeleteAPI(BaseAPIView):
     service = CommentService()
 
     @extend_schema(

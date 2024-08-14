@@ -23,7 +23,7 @@ from core_apps.shared.swaggers import (
 logger = logging.getLogger("django")
 
 
-class MyProfileDetailAPIView(BaseAPIView):
+class MyProfileDetailAPI(BaseAPIView):
     class ProfileRenderResponse(CommonRenderResponse):
         results = result_serializer(ProfileSerializer())
 
@@ -36,7 +36,7 @@ class MyProfileDetailAPIView(BaseAPIView):
         return self.success_response(data=serializer.data, message="Profile successfully retrieved")
 
 
-class UserProfileDetailAPIView(BaseAPIView):
+class UserProfileDetailAPI(BaseAPIView):
     permission_classes = [AllowAny]
 
     class ProfileRenderResponse(CommonRenderResponse):
@@ -56,7 +56,7 @@ class UserProfileDetailAPIView(BaseAPIView):
         )
 
 
-class UpdateProfileAPIView(BaseAPIView):
+class UpdateProfileAPI(BaseAPIView):
     class ProfileRenderResponse(CommonRenderResponse):
         results = result_serializer(ProfileSerializer())
 
@@ -78,7 +78,7 @@ class UpdateProfileAPIView(BaseAPIView):
         return self.success_response(data=serializer.data, message="Successfully update profile")
 
 
-class MyFollowingListView(BaseAPIView):
+class MyFollowingListAPI(BaseAPIView):
     permission_classes = [AllowAny]
 
     class FollowerRenderSerializer(CommonRenderResponse):

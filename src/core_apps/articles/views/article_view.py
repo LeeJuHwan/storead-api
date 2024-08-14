@@ -19,7 +19,7 @@ from core_apps.shared.swaggers import DeleteOutputSchema, UuidSerializer
 User = get_user_model()
 
 
-class ArticleListCreateView(BaseListAPIView):
+class ArticleListCreateAPI(BaseListAPIView):
     queryset = Article.objects.all()
     serializer_class = ArticleSerializer
     pagination_class = CommonCursorPagination

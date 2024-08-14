@@ -118,3 +118,23 @@ class ArticleDetailAPI(BaseAPIView):
     def delete(self, request, article_id):
         self.service.delete_article(article_id, self.author_id)
         return self.success_response(message="[HARD DELETE] deleted successfully!")
+
+
+class MyArticleDetailAPI(BaseListAPIView):
+    service = ArticleService()
+    serializer_class = ArticleSerializer
+
+    @property
+    def author(self):
+        return self.request.user
+
+    def get_queryset(self):
+        return self.service.get_my_article_list(request_user=self.author)
+
+    @extend_schema(
+        summary="내가 작성한 게시글 API",
+        tags=["게시글"],
+        responses=schema.ArticleOutputSchema(),
+    )
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)

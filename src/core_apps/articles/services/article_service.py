@@ -1,6 +1,10 @@
 from typing import Optional
 
-from core_apps.articles.exceptions import ArticleIdNotFound, OnlyArticleOwner
+from core_apps.articles.exceptions import (
+    ArticleIdNotFound,
+    DoesNotExistsArticle,
+    OnlyArticleOwner,
+)
 from core_apps.articles.models import Article
 from core_apps.articles.serializers.article_serializer import ArticleSerializer
 from core_apps.articles.services.article_query import ArticleQuery
@@ -12,6 +16,17 @@ from core_apps.books.services.book_query import BookQuery
 class ArticleService:
     query = ArticleQuery()
     book_query = BookQuery()
+
+    def get_my_article_list(self, request_user):
+        """
+        본인이 작성한 게시글 목록 가져오기
+        """
+        articles: Optional[Article] = self.query.get_my_article(request_user)
+
+        if not articles:
+            raise DoesNotExistsArticle()
+
+        return articles
 
     def get_article(self, article_uuid: str):
         return self.query.get_article_by_uuid(article_uuid)

@@ -23,3 +23,9 @@ class OnlyArticleOwner(APIException):
     status_code = 401
     default_detail = "Only author can retrieve this article"
     default_code = "unauthorized"
+
+
+class DoesNotExistsArticle(APIException):
+    status_code = 404
+    default_detail = "does not exists article by user"
+    default_code = "not_found"

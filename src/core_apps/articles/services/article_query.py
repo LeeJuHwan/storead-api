@@ -31,3 +31,7 @@ class ArticleQuery(BaseSelector):
             article = None
 
         return article
+
+    @staticmethod
+    def get_my_article(request_user):
+        return Article.objects.filter(author=request_user)

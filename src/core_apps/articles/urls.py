@@ -11,7 +11,7 @@ urlpatterns = [
     ),
     path(
         "/<uuid:article_id>/recommend",
-        views.RecommendArticleView.as_view(),
+        views.RecommendArticleAPI.as_view(),
         name="article-recommend",
     ),
     path("/me", views.MyArticleDetailAPI.as_view(), name="my-article-detail"),

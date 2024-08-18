@@ -28,6 +28,7 @@ repos:
     hooks:
       - id: flake8
         args: [--max-line-length=120]
+        exclude: migrations|apps
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.5.5
     hooks:

@@ -1,8 +1,10 @@
 from django.contrib.auth import get_user_model
+from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import OpenApiParameter, extend_schema
-from rest_framework import permissions, status
+from rest_framework import filters, permissions, status
 
+from core_apps.articles.filters import ArticleFilter
 from core_apps.articles.models import Article, ArticleView
 from core_apps.articles.permissions import IsOwnerOrReadOnly
 from core_apps.articles.serializers import (
@@ -24,9 +26,10 @@ class ArticleListCreateAPI(BaseListAPIView):
     serializer_class = ArticleSerializer
     pagination_class = CommonCursorPagination
     permission_classes = [permissions.IsAuthenticated]
+    filter_backends = [filters.OrderingFilter, DjangoFilterBackend]
+    filterset_class = ArticleFilter
     ordering_fields = [
         "created_at",
-        "updated_at",
     ]
 
     def get_permissions(self):

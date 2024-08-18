@@ -40,6 +40,9 @@ class Article(TimeStampedModel):
     slug = models.SlugField(unique=True, allow_unicode=True)
     description = models.CharField(verbose_name=_("description"), max_length=255)
     body = models.TextField(verbose_name=_("article content"))
+    thumbnail_url = models.ImageField(
+        verbose_name=_("article thumbnail"), upload_to="article_thumbnails", default=None, null=True
+    )
     recommends = models.ManyToManyField(SocialUser, through="Recommend", related_name="recommends")
 
     tags = TaggableManager()

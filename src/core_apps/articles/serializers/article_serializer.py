@@ -96,6 +96,7 @@ class ArticleSerializer(serializers.ModelSerializer):
             "comments",
             "comments_count",
             "author_rating",
+            "thumbnail_url",
         ]
 
 

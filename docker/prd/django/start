@@ -9,8 +9,8 @@ set -o pipefail
 # sciprt to exit unitialized variable is usesd
 set -o nounset
 
-echo "==> Django setup, executing: makemigrations "
-python3 src/manage.py makemigrations
+#echo "==> Django setup, executing: makemigrations "
+#python3 src/manage.py makemigrations
 echo "==> Django setup, executing: migrate pro"
 python3 src/manage.py migrate --no-input
 echo "==> collections setup, executing: collectstatic"

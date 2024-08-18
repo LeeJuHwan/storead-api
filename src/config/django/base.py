@@ -130,7 +130,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 from config.settings.jwt import *  # noqa
 from config.settings.rest_framework import *  # noqa
-from config.settings.logging import *  # noqa
+from config.settings.logger import *  # noqa
 from config.settings.sentry import *  # noqa
 from config.settings.swagger import *  # noqa
 from config.settings.storages import *  # noqa
